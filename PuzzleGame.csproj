@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Block.cs" />
-    <Compile Include="Assets\Scripts\BlockScript.cs" />
+    <Compile Include="Assets\Scripts\BlockManager.cs" />
     <Compile Include="Assets\Scripts\GameMainBehavior.cs" />
     <Compile Include="Assets\Scripts\GameService.cs" />
   </ItemGroup>
