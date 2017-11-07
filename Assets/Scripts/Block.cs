@@ -16,6 +16,10 @@ public class Block : MonoBehaviour {
         set
         {
             kind = value;
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            {
+                spriteRenderer.sprite = GetKindSprite(kind);
+            }
         }
     }
 
@@ -65,7 +69,7 @@ public class Block : MonoBehaviour {
 
     public static KIND GetRandomBlockKind(bool generateNone = false)
     {
-        return !generateNone ? (KIND)Random.Range(1, 4) : (KIND)Random.Range(0, 4);
+        return !generateNone ? (KIND)Random.Range(1, 5) : (KIND)Random.Range(0, 5);
     }
 
     public enum KIND
