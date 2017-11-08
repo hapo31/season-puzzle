@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4185649375197210}
   - component: {fileID: 212906187006761482}
+  - component: {fileID: 114993630339100726}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -40,6 +41,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114993630339100726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1252801163745188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34f6a8b384b7b4f46ac5ef2cd3b55a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxLength: 0
 --- !u!212 &212906187006761482
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -71,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1875811061
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: bcc4aa97b65539f419a5f24b810c3268, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

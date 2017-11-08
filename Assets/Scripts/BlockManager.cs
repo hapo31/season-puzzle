@@ -35,7 +35,7 @@ public class BlockManager : MonoBehaviour
             float y = i / FieldLength / BASELENGTH * BASEY + OffsetYPosition;
             Debug.Log($"x:{x} y:{y}");
             obj.transform.position = new Vector3(x, y);
-            obj.Kind = Block.GetRandomBlockKind(true);
+            obj.Kind = Block.GetRandomBlockKind();
             obj.name = $"Block[{blocks.Count}](Pos:{x}, {y})";
 
             blocks.Add(obj);
