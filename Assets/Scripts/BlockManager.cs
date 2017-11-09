@@ -15,6 +15,8 @@ public class BlockManager : MonoBehaviour
 
     private List<Block> blocks = new List<Block>();
     private List<Sprite> background = new List<Sprite>();
+
+    private List<Block.KIND> fieldData = new List<Block.KIND>();
     private Cursor cursor;
 
     private const float BASEY = 4.0f;
@@ -35,7 +37,7 @@ public class BlockManager : MonoBehaviour
             float y = i / FieldLength / BASELENGTH * BASEY + OffsetYPosition;
             Debug.Log($"x:{x} y:{y}");
             obj.transform.position = new Vector3(x, y);
-            obj.Kind = Block.GetRandomBlockKind();
+            fieldData.Add(obj.CreateBlock());
             obj.name = $"Block[{blocks.Count}](Pos:{x}, {y})";
 
             blocks.Add(obj);
@@ -52,11 +54,7 @@ public class BlockManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //var target = Random.Range(0, blocks.Count - 1);
-        //var kind = Block.GetRandomBlockKind();
-
-        // blocks[target].Kind = kind;
-
+        FieldUpdate();
         var d = -1;
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -91,6 +89,14 @@ public class BlockManager : MonoBehaviour
                 break;
         }
         ++frames;
+    }
+
+    void FieldUpdate()
+    {
+        for(var i = 0; i < fieldData.Count; ++i)
+        {
+            blocks[i].Kind = fieldData[i];
+        }
     }
 
     Vector3 GetBlockPosition(int x, int y)

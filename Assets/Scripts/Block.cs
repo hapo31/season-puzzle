@@ -15,9 +15,9 @@ public class Block : MonoBehaviour {
 
         set
         {
-            kind = value;
-            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            if (kind != value && spriteRenderer != null && spriteRenderer.sprite != null)
             {
+                kind = value;
                 spriteRenderer.sprite = GetKindSprite(kind);
             }
         }
@@ -65,6 +65,11 @@ public class Block : MonoBehaviour {
             default:
                 return NoneSprite;
         }
+    }
+
+    public KIND CreateBlock()
+    {
+        return Kind = GetRandomBlockKind();
     }
 
     public static KIND GetRandomBlockKind(bool generateNone = false)
