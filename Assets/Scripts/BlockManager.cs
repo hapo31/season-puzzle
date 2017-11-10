@@ -55,40 +55,25 @@ public class BlockManager : MonoBehaviour
     void Update()
     {
         FieldUpdate();
-        var d = -1;
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetAxis("Horizontal") < 0)
         {
-            d = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            d = 1;
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            d = 2;
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            d = 3;
+            cursor.Left();
         }
 
-        switch (d)
+        if (Input.GetAxis("Horizontal") > 0)
         {
-            case 0:
-                cursor.Up();
-                break;
-            case 1:
-                cursor.Right();
-                break;
-            case 2:
-                cursor.Down();
-                break;
-            case 3:
-                cursor.Left();
-                break;
+            cursor.Right();
         }
-        ++frames;
+
+        if (Input.GetAxis("Vertical") < 0)
+        {
+            cursor.Up();
+        }
+
+        if (Input.GetAxis("Vertical") > 0)
+        {
+            cursor.Down();
+        }
     }
 
     void FieldUpdate()
