@@ -49,31 +49,77 @@ public class BlockManager : MonoBehaviour
 
         cursor = Instantiate(cursorPrefab);
         cursor.SetBlockData(blocks, FieldLength);
+        cursor.SetFieldData(fieldData, FieldLength);
         cursor.PositionX = 0;
         cursor.PositionY = 0;
 
         // キー操作の定義
 
         // カーソルを左へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.LEFT, key => cursor.Left());
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.LEFT, key =>
+        {
+            if (cursor.Hold)
+            {
+                cursor.SwapLeftBlock();
+            }
+            else
+            {
+                cursor.Left();
+            }
+        });
         PlayerInputManager.RegisterOnKeyDelayHandler(KEYS.LEFT, KeyDelayFrame, null);
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.LEFT, KeyRepeatInterval, (key, _) => cursor.Left());
 
         // カーソルを右へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.RIGHT, key => cursor.Right());
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.RIGHT, key =>
+        {
+            if (cursor.Hold)
+            {
+                cursor.SwapRightBlock();
+            }
+            else
+            {
+                cursor.Right();
+            }
+        });
         PlayerInputManager.RegisterOnKeyDelayHandler(KEYS.RIGHT, KeyDelayFrame, null);
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.RIGHT, KeyRepeatInterval, (key, _) => cursor.Right());
 
         // カーソルを上へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.UP, key => cursor.Up());
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.UP, key =>
+        {
+            if (cursor.Hold)
+            {
+                cursor.SwapUpBlock();
+            }
+            else
+            {
+                cursor.Up();
+            }
+        });
         PlayerInputManager.RegisterOnKeyDelayHandler(KEYS.UP, KeyDelayFrame, null);
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.UP, KeyRepeatInterval, (key, _) => cursor.Up());
 
         // カーソルを下へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.DOWN, key => cursor.Down());
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.DOWN, key =>
+        {
+            if (cursor.Hold)
+            {
+                cursor.SwapDownBlock();
+            }
+            else
+            {
+                cursor.Down();
+            }
+        });
         PlayerInputManager.RegisterOnKeyDelayHandler(KEYS.DOWN, KeyDelayFrame, null);
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.DOWN, KeyRepeatInterval, (key, _) => cursor.Down());
-        
+
+        // ブロックを選択
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, key => cursor.Hold = true);
+        PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (key, _) => cursor.Hold = false);
+
+
     }
 
     // Update is called once per frame

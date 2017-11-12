@@ -19,6 +19,11 @@ namespace Util
             return data[y * width + x];
         }
 
+        public void SetValue(int x, int y, T value)
+        {
+            data[y * width + x] = value;
+        }
+
         public PositionArray(int arraySize, int width, int height)
         {
             data = new List<T>(arraySize);
