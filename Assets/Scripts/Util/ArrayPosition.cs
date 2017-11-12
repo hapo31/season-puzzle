@@ -21,7 +21,6 @@ namespace Util
 
         public PositionArray(int arraySize, int width, int height)
         {
-            Debug.Log($"[INITIALIZE] width: [{width}]");
             data = new List<T>(arraySize);
             this.width = width;
             this.height = height;

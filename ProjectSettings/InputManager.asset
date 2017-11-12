@@ -69,19 +69,3 @@ InputManager:
     type: 0
     axis: 0
     joyNum: 0
-  - serializedVersion: 3
-    m_Name: Submit
-    descriptiveName: "\u30D6\u30ED\u30C3\u30AF\u3092\u5165\u308C\u66FF\u3048\u308B\u30DC\u30BF\u30F3B"
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: joystick button 1
-    altNegativeButton: 
-    altPositiveButton: x
-    gravity: 1000
-    dead: 0.001
-    sensitivity: 1000
-    snap: 0
-    invert: 0
-    type: 0
-    axis: 0
-    joyNum: 0

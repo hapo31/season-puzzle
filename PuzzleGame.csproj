@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\DebugUIText.cs" />
+    <Compile Include="Assets\InputManager.cs" />
     <Compile Include="Assets\KeyManager.cs" />
     <Compile Include="Assets\Sc.cs" />
     <Compile Include="Assets\Scripts\Block.cs" />

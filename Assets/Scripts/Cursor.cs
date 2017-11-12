@@ -86,12 +86,10 @@ public class Cursor : MonoBehaviour {
 
     private void SpriteUpdate()
     {
-        Debug.Log($"{x}, {y}");
         if (cursor != null)
         {
             var pos = data.GetValue(PositionX, PositionY).transform.position;
             cursor.transform.position = pos;
-            Debug.Log($"GetBlock[{PositionX * PositionY}]=>{pos.x}, {pos.y}");
         }
     }
 
