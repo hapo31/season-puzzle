@@ -23,6 +23,20 @@ public class Block : MonoBehaviour {
         }
     }
 
+    private bool deleting = false;
+    public bool Deleting
+    {
+        set
+        {
+            deleting = value;
+        }
+
+        get
+        {
+            return deleting;
+        }
+    }
+
     public Sprite NoneSprite;
     public Sprite SpringSprite;
     public Sprite SummerSprite;

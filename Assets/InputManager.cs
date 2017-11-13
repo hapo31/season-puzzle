@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour {
 
-    public delegate void OnKeyDown(KEYS key);
+    public delegate void OnKeyDown(KEYS key, int frames = 1);
     public delegate void OnKeyDelay(KEYS key, int frames);
     public delegate void OnKeyHold(KEYS key, int frames);
     public delegate void OnKeyUp(KEYS key, int frames);
@@ -88,7 +88,16 @@ public class InputManager : MonoBehaviour {
             {
                 // キーが押されている間呼び出す
                 Debug.Log($"[OnHold] key:{key} {keyFrames[keyInt]}");
-                OnKeyHoldDelegates[keyInt].Action?.Invoke(key, keyFrames[keyInt]);
+                if (OnKeyHoldDelegates[keyInt].Action == null)
+                {
+                    // Holdハンドラがnullの場合はOnKeyDownハンドラを呼び出す
+                    OnKeyDownDelegates[keyInt]?.Invoke(key, keyFrames[keyInt]);
+                }
+                else
+                {
+                    // Holdハンドラが設定されている場合はそのまま呼び出す
+                    OnKeyHoldDelegates[keyInt].Action?.Invoke(key, keyFrames[keyInt]);
+                }
             }
         }
         else if(keyFrames[keyInt] != 0)

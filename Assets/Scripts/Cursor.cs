@@ -43,7 +43,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool Down()
     {
-        var r = PositionY - 1 >= 0;
+        var r = CheckDown();
         if (r)
         {
             --PositionY;
@@ -53,12 +53,21 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
+    /// カーソルが下に移動できるかチェック
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckDown()
+    {
+        return y - 1 >= 0 && fieldData.GetValue(x, y - 1) != Block.KIND.NONE;
+    }
+
+    /// <summary>
     /// カーソルを上へ
     /// </summary>
     /// <returns></returns>
     public bool Up()
     {
-        var r = PositionY + 1 < MaxLength;
+        var r = CheckUp();
         if (r)
         {
             ++PositionY;
@@ -68,12 +77,21 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
+    /// カーソルが上に移動できるかチェック
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckUp()
+    {
+        return y + 1 < MaxLength && fieldData.GetValue(x, y + 1) != Block.KIND.NONE;
+    }
+
+    /// <summary>
     /// カーソルを左へ
     /// </summary>
     /// <returns></returns>
     public bool Left()
     {
-        var r = PositionX - 1 >= 0;
+        var r = CheckLeft();
         if (r)
         {
             --PositionX;
@@ -83,18 +101,36 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
+    /// カーソルが左に移動できるかチェック
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckLeft()
+    {
+        return x - 1 >= 0 && fieldData.GetValue(x - 1, y) != Block.KIND.NONE;
+    }
+
+    /// <summary>
     /// カーソルを右へ
     /// </summary>
     /// <returns></returns>
     public bool Right()
     {
-        var r = PositionX + 1 < MaxLength;
+        var r = CheckRight();
         if (r)
         {
             ++PositionX;
             SpriteUpdate();
         }
         return r;
+    }
+
+    /// <summary>
+    /// カーソルが右に移動できるかチェック
+    /// </summary>
+    /// <returns></returns>
+    public bool CheckRight()
+    {
+        return x + 1 < MaxLength && fieldData.GetValue(x + 1, y) != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -125,7 +161,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapDownBlock()
     {
-        if (y > 0)
+        if (CheckDown())
         {
             SwapFieldData(x, y, x, y - 1);
             Down();
@@ -143,7 +179,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapUpBlock()
     {
-        if (y < MaxLength)
+        if (CheckUp())
         {
             SwapFieldData(x, y, x, y + 1);
             Up();
@@ -161,7 +197,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapLeftBlock()
     {
-        if (x > 0)
+        if (CheckLeft())
         {
             SwapFieldData(x, y, x - 1, y);
             Left();
@@ -179,7 +215,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapRightBlock()
     {
-        if (x < MaxLength)
+        if (CheckRight())
         {
             SwapFieldData(x, y, x + 1, y);
             Right();
