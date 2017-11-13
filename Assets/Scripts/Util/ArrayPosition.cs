@@ -24,6 +24,11 @@ namespace Util
             data[y * width + x] = value;
         }
 
+        public void Add(T value)
+        {
+            data.Add(value);
+        }
+
         public PositionArray(int arraySize, int width, int height)
         {
             data = new List<T>(arraySize);

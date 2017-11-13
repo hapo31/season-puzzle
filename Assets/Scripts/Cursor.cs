@@ -32,9 +32,9 @@ public class Cursor : MonoBehaviour {
     private int x;
     private int y;
     
-    private PositionArray<Block.KIND> fieldData;
+    private List<Block.KIND> fieldData;
 
-    private PositionArray<Block> data;
+    private List<Block> data;
     private SpriteRenderer cursor;
 
     /// <summary>
@@ -58,7 +58,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckDown()
     {
-        return y - 1 >= 0 && fieldData.GetValue(x, y - 1) != Block.KIND.NONE;
+        return y - 1 >= 0 && fieldData.PositionAt(x, y - 1, MaxLength) != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckUp()
     {
-        return y + 1 < MaxLength && fieldData.GetValue(x, y + 1) != Block.KIND.NONE;
+        return y + 1 < MaxLength && fieldData.PositionAt(x, y + 1, MaxLength) != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckLeft()
     {
-        return x - 1 >= 0 && fieldData.GetValue(x - 1, y) != Block.KIND.NONE;
+        return x - 1 >= 0 && fieldData.PositionAt(x - 1, y, MaxLength) != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckRight()
     {
-        return x + 1 < MaxLength && fieldData.GetValue(x + 1, y) != Block.KIND.NONE;
+        return x + 1 < MaxLength && fieldData.PositionAt(x + 1, y, MaxLength) != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ public class Cursor : MonoBehaviour {
     public void SetBlockData(List<Block> source, int maxWidth)
     {
         MaxLength = maxWidth;
-        data = new PositionArray<Block>(source, MaxLength, MaxLength);
+        data = source;
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public class Cursor : MonoBehaviour {
     public void SetFieldData(List<Block.KIND> source, int maxWidth)
     {
         MaxLength = maxWidth;
-        fieldData = new PositionArray<Block.KIND>(source, maxWidth, maxWidth);
+        fieldData = source;
     }
     
     /// <summary>
@@ -229,17 +229,17 @@ public class Cursor : MonoBehaviour {
 
     private void SwapFieldData(int fromX, int fromY, int toX, int toY)
     {
-        var from = fieldData.GetValue(fromX, fromY);
-        var to = fieldData.GetValue(toX, toY);
-        fieldData.SetValue(toX, toY, from);
-        fieldData.SetValue(fromX, fromY, to);
+        var from = fieldData.PositionAt(fromX, fromY, MaxLength);
+        var to = fieldData.PositionAt(toX, toY, MaxLength);
+        fieldData.SetValuePosition(toX, toY, MaxLength, from);
+        fieldData.SetValuePosition(fromX, fromY, MaxLength, to);
     }
 
     private void SpriteUpdate()
     {
         if (cursor != null)
         {
-            var pos = data.GetValue(PositionX, PositionY).transform.position;
+            var pos = data.PositionAt(PositionX, PositionY, MaxLength).transform.position;
             cursor.transform.position = pos;
         }
     }

@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Util;
 
-public class BlockManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-
     public Block blockPrefab;
     public Cursor cursorPrefab;
 
@@ -28,8 +28,8 @@ public class BlockManager : MonoBehaviour
     // カーソルのゲームオブジェクト
     private Cursor cursor;
 
-    private const float BASEY = 3.5f;
-    private const float BASEX = 7.0f;
+    private const float BASEY = 3.0f;
+    private const float BASEX = 6.0f;
     private const float BASELENGTH = 2.6f;
 
     public InputManager PlayerInputManager;
@@ -161,6 +161,12 @@ public class BlockManager : MonoBehaviour
 
     Vector3 GetBlockPosition(int x, int y)
     {
-        return blocks[y * FieldLength + x].transform.position;
+        return  blocks.PositionAt(x, y, FieldLength).transform.position;
     }
+}
+
+
+public class FieldManager
+{
+
 }
