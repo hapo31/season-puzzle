@@ -248,6 +248,7 @@ public class Cursor : MonoBehaviour {
 	void Start ()
     {
         cursor = GetComponent<SpriteRenderer>();
+        SpriteUpdate();
     }
 	
 	// Update is called once per frame

@@ -17,8 +17,7 @@ public class GameManager : MonoBehaviour
     public int KeyDelayFrame = 20;
     // キー押しっぱなしにしている間、処理を行う間隔
     public int KeyRepeatInterval = 5;
-
-    private List<bool> checkedField;
+    
     // ブロックのゲームオブジェクト
     private List<Block> blocks = new List<Block>();
     private List<Sprite> background = new List<Sprite>();
@@ -68,10 +67,12 @@ public class GameManager : MonoBehaviour
             blocks.Add(obj);
         }
 
-
         cursor = Instantiate(cursorPrefab);
         cursor.SetBlockData(blocks, FieldLength);
         cursor.SetFieldData(fieldData, FieldLength);
+        // カーソルの初期位置を設定
+        cursor.PositionX = FieldLength / 2;
+        cursor.PositionY = FieldLength / 2;
 
         // キー操作の定義
 
@@ -139,9 +140,6 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = true);
         PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = false);
 
-
-        cursor.PositionX = FieldLength / 2;
-        cursor.PositionY = FieldLength / 2;
     }
 
     // Update is called once per frame
@@ -163,10 +161,4 @@ public class GameManager : MonoBehaviour
     {
         return  blocks.PositionAt(x, y, FieldLength).transform.position;
     }
-}
-
-
-public class FieldManager
-{
-
 }
