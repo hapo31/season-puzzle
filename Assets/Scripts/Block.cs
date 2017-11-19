@@ -23,20 +23,6 @@ public class Block : MonoBehaviour {
         }
     }
 
-    private bool deleting = false;
-    public bool Deleting
-    {
-        set
-        {
-            deleting = value;
-        }
-
-        get
-        {
-            return deleting;
-        }
-    }
-
     public Sprite NoneSprite;
     public Sprite SpringSprite;
     public Sprite SummerSprite;
@@ -98,5 +84,17 @@ public class Block : MonoBehaviour {
         SUMMER,
         FALL,
         WINTER
+    }
+
+    public class BlockStatus
+    {
+        public KIND kind;
+        public bool deleting;
+
+        public BlockStatus(KIND kind, bool deleting = false)
+        {
+            this.kind = kind;
+            this.deleting = deleting;
+        }
     }
 }

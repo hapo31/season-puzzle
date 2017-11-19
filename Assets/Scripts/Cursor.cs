@@ -231,8 +231,8 @@ public class Cursor : MonoBehaviour {
     {
         var from = fieldData.PositionAt(fromX, fromY, MaxLength);
         var to = fieldData.PositionAt(toX, toY, MaxLength);
-        fieldData.SetValuePosition(toX, toY, MaxLength, from);
-        fieldData.SetValuePosition(fromX, fromY, MaxLength, to);
+        fieldData.SetValueToPosition(toX, toY, MaxLength, from);
+        fieldData.SetValueToPosition(fromX, fromY, MaxLength, to);
     }
 
     private void SpriteUpdate()

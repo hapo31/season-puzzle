@@ -6,7 +6,7 @@ public static class ListPositionMappingExtendMethod {
         return list[y * width + x];
     }
 
-    public static void SetValuePosition<T>(this List<T> list, int x, int y, int width, T value)
+    public static void SetValueToPosition<T>(this List<T> list, int x, int y, int width, T value)
     {
         list[y * width + x] = value;
     }
