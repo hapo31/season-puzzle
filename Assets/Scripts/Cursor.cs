@@ -38,12 +38,12 @@ public class Cursor : MonoBehaviour {
     private SpriteRenderer cursor;
 
     /// <summary>
-    /// カーソルを下へ
+    /// カーソルを上へ
     /// </summary>
     /// <returns></returns>
-    public bool Down()
+    public bool Up()
     {
-        var r = CheckDown();
+        var r = CheckUp();
         if (r)
         {
             --PositionY;
@@ -53,21 +53,21 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// カーソルが下に移動できるかチェック
+    /// カーソルが上に移動できるかチェック
     /// </summary>
     /// <returns></returns>
-    public bool CheckDown()
+    public bool CheckUp()
     {
         return y - 1 >= 0 && fieldData.PositionAt(x, y - 1, MaxLength) != Block.KIND.NONE;
     }
 
     /// <summary>
-    /// カーソルを上へ
+    /// カーソルを下へ
     /// </summary>
     /// <returns></returns>
-    public bool Up()
+    public bool Down()
     {
-        var r = CheckUp();
+        var r = CheckDown();
         if (r)
         {
             ++PositionY;
@@ -77,10 +77,10 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// カーソルが上に移動できるかチェック
+    /// カーソルが下に移動できるかチェック
     /// </summary>
     /// <returns></returns>
-    public bool CheckUp()
+    public bool CheckDown()
     {
         return y + 1 < MaxLength && fieldData.PositionAt(x, y + 1, MaxLength) != Block.KIND.NONE;
     }
@@ -156,15 +156,15 @@ public class Cursor : MonoBehaviour {
     }
     
     /// <summary>
-    /// 選択位置のブロックとその下のブロックを入れ替える
+    /// 選択位置のブロックとその上のブロックを入れ替える
     /// </summary>
     /// <returns>移動に成功したかどうか</returns>
-    public bool SwapDownBlock()
+    public bool SwapUpBlock()
     {
-        if (CheckDown())
+        if (CheckUp())
         {
             SwapFieldData(x, y, x, y - 1);
-            Down();
+            Up();
             return true;
         }
         else
@@ -174,15 +174,15 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// 選択位置のブロックとその上のブロックを入れ替える
+    /// 選択位置のブロックとその下のブロックを入れ替える
     /// </summary>
     /// <returns>移動に成功したかどうか</returns>
-    public bool SwapUpBlock()
+    public bool SwapDownBlock()
     {
-        if (CheckUp())
+        if (CheckDown())
         {
             SwapFieldData(x, y, x, y + 1);
-            Up();
+            Down();
             return true;
         }
         else

@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
             var obj = Instantiate(blockPrefab);
 
             float x = i % FieldLength / (BASELENGTH * 2) * BASEX + OffsetXPosition;
-            float y = i / FieldLength / BASELENGTH * BASEY + OffsetYPosition;
+            float y =  -(i / FieldLength / BASELENGTH * BASEY + OffsetYPosition);
             obj.transform.position = new Vector3(x, y);
             
             if (i == 0 || i == FieldLength - 1 || i == (FieldLength * (FieldLength - 1)) || i == (FieldLength * FieldLength) - 1)
