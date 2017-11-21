@@ -15,11 +15,21 @@ public class Block : MonoBehaviour {
 
         set
         {
-            if (kind != value && spriteRenderer != null && spriteRenderer.sprite != null)
+            kind = value;
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
             {
-                kind = value;
                 spriteRenderer.sprite = GetKindSprite(kind);
             }
+        }
+    }
+
+    private bool deleting;
+    public bool Deleting
+    {
+        get { return deleting; }
+        set
+        {
+            deleting = value;
         }
     }
 
@@ -40,6 +50,9 @@ public class Block : MonoBehaviour {
 	void Start () {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = GetKindSprite(this.kind);
+
+        // スプライトの見た目が初期化されていない可能性があるのでここで更新する
+        Kind = kind;
     }
 	
 	// Update is called once per frame
@@ -67,9 +80,9 @@ public class Block : MonoBehaviour {
         }
     }
 
-    public KIND CreateBlock()
+    public void SetRandomBlock()
     {
-        return Kind = GetRandomBlockKind();
+        Kind = GetRandomBlockKind();
     }
 
     public static KIND GetRandomBlockKind(bool generateNone = false)
@@ -84,17 +97,5 @@ public class Block : MonoBehaviour {
         SUMMER,
         FALL,
         WINTER
-    }
-
-    public class BlockStatus
-    {
-        public KIND kind;
-        public bool deleting;
-
-        public BlockStatus(KIND kind, bool deleting = false)
-        {
-            this.kind = kind;
-            this.deleting = deleting;
-        }
     }
 }

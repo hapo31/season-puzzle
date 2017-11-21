@@ -32,9 +32,9 @@ public class Cursor : MonoBehaviour {
     private int x;
     private int y;
     
-    private List<Block.KIND> fieldData;
+    //private List<Block.KIND> fieldData;
 
-    private List<Block> data;
+    private List<Block> blocks;
     private SpriteRenderer cursor;
 
     /// <summary>
@@ -58,7 +58,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckUp()
     {
-        return y - 1 >= 0 && fieldData.PositionAt(x, y - 1, MaxLength) != Block.KIND.NONE;
+        return y - 1 >= 0 && blocks.PositionAt(x, y - 1, MaxLength).Kind != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckDown()
     {
-        return y + 1 < MaxLength && fieldData.PositionAt(x, y + 1, MaxLength) != Block.KIND.NONE;
+        return y + 1 < MaxLength && blocks.PositionAt(x, y + 1, MaxLength).Kind != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckLeft()
     {
-        return x - 1 >= 0 && fieldData.PositionAt(x - 1, y, MaxLength) != Block.KIND.NONE;
+        return x - 1 >= 0 && blocks.PositionAt(x - 1, y, MaxLength).Kind != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool CheckRight()
     {
-        return x + 1 < MaxLength && fieldData.PositionAt(x + 1, y, MaxLength) != Block.KIND.NONE;
+        return x + 1 < MaxLength && blocks.PositionAt(x + 1, y, MaxLength).Kind != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -141,18 +141,7 @@ public class Cursor : MonoBehaviour {
     public void SetBlockData(List<Block> source, int maxWidth)
     {
         MaxLength = maxWidth;
-        data = source;
-    }
-
-    /// <summary>
-    /// フィールドデータを設定する
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="maxWidth"></param>
-    public void SetFieldData(List<Block.KIND> source, int maxWidth)
-    {
-        MaxLength = maxWidth;
-        fieldData = source;
+        blocks = source;
     }
     
     /// <summary>
@@ -227,19 +216,23 @@ public class Cursor : MonoBehaviour {
         }
     }
 
+    // 指定した2つの座標のブロックを入れ替える
     private void SwapFieldData(int fromX, int fromY, int toX, int toY)
     {
-        var from = fieldData.PositionAt(fromX, fromY, MaxLength);
-        var to = fieldData.PositionAt(toX, toY, MaxLength);
-        fieldData.SetValueToPosition(toX, toY, MaxLength, from);
-        fieldData.SetValueToPosition(fromX, fromY, MaxLength, to);
+        var fromBlock = blocks.PositionAt(fromX, fromY, MaxLength);
+        var toBlock = blocks.PositionAt(toX, toY, MaxLength);
+        var tmp = toBlock.Kind;
+
+        toBlock.Kind = fromBlock.Kind;
+        fromBlock.Kind = tmp;
     }
 
+    // カーソルの座標をブロックに合わせる
     private void SpriteUpdate()
     {
         if (cursor != null)
         {
-            var pos = data.PositionAt(PositionX, PositionY, MaxLength).transform.position;
+            var pos = blocks.PositionAt(PositionX, PositionY, MaxLength).transform.position;
             cursor.transform.position = pos;
         }
     }

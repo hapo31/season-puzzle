@@ -17,13 +17,15 @@ public class GameManager : MonoBehaviour
     public int KeyDelayFrame = 20;
     // キー押しっぱなしにしている間、処理を行う間隔
     public int KeyRepeatInterval = 5;
-    
+
+    private FieldManager fieldManager;
+
     // ブロックのゲームオブジェクト
     private List<Block> blocks = new List<Block>();
     private List<Sprite> background = new List<Sprite>();
 
     // ブロックの状態
-    private List<Block.KIND> fieldData = new List<Block.KIND>();
+    //private List<Block.KIND> fieldData = new List<Block.KIND>();
     // カーソルのゲームオブジェクト
     private Cursor cursor;
 
@@ -49,12 +51,12 @@ public class GameManager : MonoBehaviour
             if (i == 0 || i == FieldLength - 1 || i == (FieldLength * (FieldLength - 1)) || i == (FieldLength * FieldLength) - 1)
             {
                 // フィールドの角の4つはNONEブロックにする
-                fieldData.Add(Block.KIND.NONE);
+                obj.Kind = Block.KIND.NONE;
             }
             else
             {
                 // ブロックをランダム生成する
-                fieldData.Add(obj.CreateBlock());
+                obj.SetRandomBlock();
             }
 
             if (i % (FieldLength / 2 * (FieldLength * 2)) == 0)
@@ -69,10 +71,11 @@ public class GameManager : MonoBehaviour
 
         cursor = Instantiate(cursorPrefab);
         cursor.SetBlockData(blocks, FieldLength);
-        cursor.SetFieldData(fieldData, FieldLength);
         // カーソルの初期位置を設定
         cursor.PositionX = FieldLength / 2;
         cursor.PositionY = FieldLength / 2;
+
+        fieldManager = new FieldManager(blocks, FieldLength);
 
         // キー操作の定義
 
@@ -151,10 +154,7 @@ public class GameManager : MonoBehaviour
 
     void FieldUpdate()
     {
-        for(var i = 0; i < fieldData.Count; ++i)
-        {
-            blocks[i].Kind = fieldData[i];
-        }
+        fieldManager.Update();
     }
 
     Vector3 GetBlockPosition(int x, int y)
