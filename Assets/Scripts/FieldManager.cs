@@ -37,39 +37,52 @@ public class FieldManager
     /// 各壁から他の壁へ同じブロックが繋がっているかをチェックする
     /// </summary>
     public void Update()
-    {
-        for (int i = 1; i < FieldWidth - 1; ++i)
+    {        
+        for (int y = 0; y < FieldWidth; ++y)
         {
-            // その壁にくっついているブロックはすべてチェック済みとしておく
-            checkedList[i] = true;
-        }
-
-        // 上側の壁からチェック
-        for (int i = 1; i < FieldWidth - 1; ++i)
-        {
-            // 下に向かってチェックする
-            checkField(blocks[i].Kind, i % fieldWidth, 1);
-
-        }
-
-        // すべてチェックし終わったらブロックの種類を変える
-        for (var i = 0; i < blocks.Count; ++i)
-        {
-            if (blocks[i].Deleting)
+            for (int x = 0; x < FieldWidth; ++x)
             {
-                blocks[i].Kind = KIND.NONE;
-            }
-        }
+                // その地点のブロックがNONEでなかったら調べる
+                if (blocks.PositionAt(x, y, FieldWidth).Kind != KIND.NONE)
+                {
+                    // 上の壁
+                    if (y == 0)
+                    {
+                        // 下に向かって調べる
+                        
+                    }
 
-        for (var i = 0; i < checkedList.Length; ++i)
-        {
-            checkedList[i] = false;
+                    // 左の壁
+                    if (x == 0)
+                    {
+                        // 右に向かって調べる
+                    }
+
+                    // 右の壁
+                    if (x == FieldWidth - 1)
+                    {
+                        // 左に向かって調べる
+                    }
+
+                    // 下の壁
+                    if (y == FieldWidth - 1)
+                    {
+                        // 上に向かって調べる
+                    }
+                }
+            }
         }
     }
 
     
-    private bool checkField(KIND target, int posX, int posY)
+    private bool checkField(KIND target, int posX, int posY, int startX, int startY)
     {
+        // スタート地点と同じマスならfalse
+        if (startX == posX && startY == posY)
+        {
+            return false;
+        }
+
         // チェック済みならfalse
         if (checkedList.PositionAt(posX, posY, FieldWidth))
         {
@@ -93,10 +106,10 @@ public class FieldManager
         else
         {
             // 各方向のブロックを調べるために再帰する
-            var up = checkField(target, posX, posY + 1);
-            var down = checkField(target, posX, posY - 1);
-            var left = checkField(target, posX - 1, posY);
-            var right = checkField(target, posX + 1, posY);
+            var up = checkField(target, posX, posY + 1, startX, startY);
+            var down = checkField(target, posX, posY - 1, startX, startY);
+            var left = checkField(target, posX - 1, posY, startX, startY);
+            var right = checkField(target, posX + 1, posY, startX, startY);
 
             var r = up || down || left || right;
             // 判定結果を代入
