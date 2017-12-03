@@ -43,7 +43,7 @@ public class Cursor : MonoBehaviour {
     /// <returns></returns>
     public bool Up()
     {
-        var r = CheckUp();
+        var r = isMovablePosition(x, y - 1);
         if (r)
         {
             --PositionY;
@@ -53,21 +53,12 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// カーソルが上に移動できるかチェック
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckUp()
-    {
-        return y - 1 >= 0 && blocks.PositionAt(x, y - 1, MaxLength).Kind != Block.KIND.NONE;
-    }
-
-    /// <summary>
     /// カーソルを下へ
     /// </summary>
     /// <returns></returns>
     public bool Down()
     {
-        var r = CheckDown();
+        var r = isMovablePosition(x, y + 1);
         if (r)
         {
             ++PositionY;
@@ -77,21 +68,12 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// カーソルが下に移動できるかチェック
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckDown()
-    {
-        return y + 1 < MaxLength && blocks.PositionAt(x, y + 1, MaxLength).Kind != Block.KIND.NONE;
-    }
-
-    /// <summary>
     /// カーソルを左へ
     /// </summary>
     /// <returns></returns>
     public bool Left()
     {
-        var r = CheckLeft();
+        var r = isMovablePosition(x - 1, y);
         if (r)
         {
             --PositionX;
@@ -101,36 +83,18 @@ public class Cursor : MonoBehaviour {
     }
 
     /// <summary>
-    /// カーソルが左に移動できるかチェック
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckLeft()
-    {
-        return x - 1 >= 0 && blocks.PositionAt(x - 1, y, MaxLength).Kind != Block.KIND.NONE;
-    }
-
-    /// <summary>
     /// カーソルを右へ
     /// </summary>
     /// <returns></returns>
     public bool Right()
     {
-        var r = CheckRight();
+        var r = isMovablePosition(x + 1, y);
         if (r)
         {
             ++PositionX;
             SpriteUpdate();
         }
         return r;
-    }
-
-    /// <summary>
-    /// カーソルが右に移動できるかチェック
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckRight()
-    {
-        return x + 1 < MaxLength && blocks.PositionAt(x + 1, y, MaxLength).Kind != Block.KIND.NONE;
     }
 
     /// <summary>
@@ -150,7 +114,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapUpBlock()
     {
-        if (CheckUp())
+        if (isSwapablePosition(x, y, x, y - 1))
         {
             SwapFieldData(x, y, x, y - 1);
             Up();
@@ -168,7 +132,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapDownBlock()
     {
-        if (CheckDown())
+        if (isSwapablePosition(x, y, x, y + 1))
         {
             SwapFieldData(x, y, x, y + 1);
             Down();
@@ -186,7 +150,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapLeftBlock()
     {
-        if (CheckLeft())
+        if (isSwapablePosition(x, y, x - 1, y))
         {
             SwapFieldData(x, y, x - 1, y);
             Left();
@@ -204,7 +168,7 @@ public class Cursor : MonoBehaviour {
     /// <returns>移動に成功したかどうか</returns>
     public bool SwapRightBlock()
     {
-        if (CheckRight())
+        if (isSwapablePosition(x, y, x + 1, y))
         {
             SwapFieldData(x, y, x + 1, y);
             Right();
@@ -214,6 +178,38 @@ public class Cursor : MonoBehaviour {
         {
             return false;
         }
+    }
+    
+    /// <summary>
+    /// その位置にカーソルが移動できるかどうか
+    /// 指定座標がフィールド内かつ、ブロックの種類がNONEでなければ移動可能
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    private bool isMovablePosition(int x, int y)
+    {
+        var inField = blocks.InField(x, y, MaxLength);
+        return inField && blocks.PositionAt(x, y, MaxLength).Kind != Block.KIND.NONE;
+    }
+
+    /// <summary>
+    /// その位置のブロックと交換できるか
+    /// isMovablePositionがtrueを返すような条件かつ、そのブロックが消去中でなければ交換可能
+    /// </summary>
+    /// <param name="fromX"></param>
+    /// <param name="fromY"></param>
+    /// <param name="toX"></param>
+    /// <param name="toY"></param>
+    /// <returns></returns>
+    private bool isSwapablePosition(int fromX, int fromY, int toX, int toY)
+    {
+        // 移動先にカーソルが移動できるか
+        return isMovablePosition(toX, toY) &&
+            // 移動元ブロックが消去中でないか
+            !blocks.PositionAt(fromX, fromY, MaxLength).Deleting &&
+            // 移動先ブロックが消去中でないか
+            !blocks.PositionAt(toX, toY, MaxLength).Deleting;
     }
 
     // 指定した2つの座標のブロックを入れ替える

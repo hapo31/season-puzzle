@@ -74,20 +74,20 @@ public class InputManager : MonoBehaviour {
             keyFrames[keyInt] += 1;
             if (keyFrames[keyInt] == 1)
             {
-                Debug.Log($"[OnDown] key:{key} {keyFrames[keyInt]}");
+                //Debug.Log($"[OnDown] key:{key} {keyFrames[keyInt]}");
                 // ボタンが押された瞬間にハンドラを呼び出す
                 OnKeyDownDelegates[keyInt]?.Invoke(key);
             }
             else if (keyFrames[keyInt] < OnKeyDelayDelegates[keyInt].frames)
             {
                 // 入力判定を発生させないディレイフレーム数が設定されている場合は、代わりにOnKeyDelayハンドラを呼び出す
-                Debug.Log($"[OnDelay] key:{key} {keyFrames[keyInt]}");
+                //Debug.Log($"[OnDelay] key:{key} {keyFrames[keyInt]}");
                 OnKeyDelayDelegates[keyInt].Action?.Invoke(key, keyFrames[keyInt]);
             }
             else if (IsHoldInvoking(key)) 
             {
                 // キーが押されている間呼び出す
-                Debug.Log($"[OnHold] key:{key} {keyFrames[keyInt]}");
+                //Debug.Log($"[OnHold] key:{key} {keyFrames[keyInt]}");
                 if (OnKeyHoldDelegates[keyInt].Action == null)
                 {
                     // Holdハンドラがnullの場合はOnKeyDownハンドラを呼び出す
@@ -105,7 +105,7 @@ public class InputManager : MonoBehaviour {
             // ボタンが離された瞬間のハンドラを呼び出す
             OnKeyUpDelegates[keyInt]?.Invoke(key, keyFrames[keyInt]);
             // フレーム数をリセット
-            Debug.Log($"[OnUp] key:{key} {keyFrames[keyInt]}");
+            //Debug.Log($"[OnUp] key:{key} {keyFrames[keyInt]}");
             keyFrames[keyInt] = 0;
         }
     }

@@ -30,6 +30,13 @@ public class Block : MonoBehaviour {
         set
         {
             deleting = value;
+            if (value) {
+                spriteRenderer.sprite = NoneSprite;
+            }
+            else
+            {
+                spriteRenderer.sprite = GetKindSprite(kind);
+            }
         }
     }
 

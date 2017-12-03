@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 using KIND = Block.KIND;
-using System.Linq;
 
 public class FieldManager
 {
@@ -42,32 +40,104 @@ public class FieldManager
         {
             for (int x = 0; x < FieldWidth; ++x)
             {
+                var block = blocks.PositionAt(x, y, FieldWidth);
                 // その地点のブロックがNONEでなかったら調べる
-                if (blocks.PositionAt(x, y, FieldWidth).Kind != KIND.NONE)
+                if (block.Kind != KIND.NONE && !block.Deleting)
                 {
                     // 上の壁
                     if (y == 0)
                     {
                         // 下に向かって調べる
-                        
+
+                        // 始点とその一つ隣のブロックが同じだったらチェック開始
+                        if (block.Kind == blocks.PositionAt(x, y + 1, FieldWidth).Kind)
+                        {
+                            var kind = blocks.PositionAt(x, y + 1, FieldWidth).Kind;
+                            var r = checkField(kind, x, y + 1, -1, y);
+                            if (r > 0)
+                            {
+                                block.Deleting = true;
+                                Debug.Log($"Delete count:{r + 1}");
+                                break;
+                            }
+                            // チェック済みリストをリセット
+                            for (int i = 0; i < checkedList.Length; ++i)
+                            {
+                                checkedList[i] = false;
+                            }
+                        }
                     }
 
                     // 左の壁
                     if (x == 0)
                     {
                         // 右に向かって調べる
+
+                        // 始点とその一つ隣のブロックが同じだったらチェック開始
+                        if (block.Kind == blocks.PositionAt(x + 1, y, FieldWidth).Kind)
+                        {
+                            var kind = blocks.PositionAt(x + 1, y, FieldWidth).Kind;
+                            var r = checkField(kind, x + 1, y, x, -1);
+                            if (r > 0)
+                            {
+                                block.Deleting = true;
+                                Debug.Log($"Delete count:{r + 1}");
+                                break;
+                            }
+                            // チェック済みリストをリセット
+                            for (int i = 0; i < checkedList.Length; ++i)
+                            {
+                                checkedList[i] = false;
+                            }
+                        }
                     }
 
                     // 右の壁
                     if (x == FieldWidth - 1)
                     {
                         // 左に向かって調べる
+
+                        // 始点とその一つ隣のブロックが同じだったらチェック開始
+                        if (block.Kind == blocks.PositionAt(x - 1, y, FieldWidth).Kind)
+                        {
+                            var kind = blocks.PositionAt(x - 1, y, FieldWidth).Kind;
+                            var r = checkField(kind, x - 1, y, x, -1);
+                            if (r > 0)
+                            {
+                                block.Deleting = true;
+                                Debug.Log($"Delete count:{r + 1}");
+                                break;
+                            }
+                            // チェック済みリストをリセット
+                            for (int i = 0; i < checkedList.Length; ++i)
+                            {
+                                checkedList[i] = false;
+                            }
+                        }
                     }
 
                     // 下の壁
                     if (y == FieldWidth - 1)
                     {
                         // 上に向かって調べる
+
+                        // 始点とその一つ隣のブロックが同じだったらチェック開始
+                        if (block.Kind == blocks.PositionAt(x, y - 1, FieldWidth).Kind)
+                        {
+                            var kind = blocks.PositionAt(x, y - 1, FieldWidth).Kind;
+                            var r = checkField(kind, x, y - 1, -1, y);
+                            if (r > 0)
+                            {
+                                block.Deleting = true;
+                                Debug.Log($"Delete count:{r + 1}");
+                                break;
+                            }
+                            // チェック済みリストをリセット
+                            for (int i = 0; i < checkedList.Length; ++i)
+                            {
+                                checkedList[i] = false;
+                            }
+                        }
                     }
                 }
             }
@@ -75,47 +145,63 @@ public class FieldManager
     }
 
     
-    private bool checkField(KIND target, int posX, int posY, int startX, int startY)
+    private int checkField(KIND target, int posX, int posY, int startX, int startY)
     {
-        // スタート地点と同じマスならfalse
-        if (startX == posX && startY == posY)
+        var block = blocks.PositionAt(posX, posY, FieldWidth);
+        // 消去中ブロックなら0
+        if (block.Deleting)
         {
-            return false;
+            return 0;
         }
 
-        // チェック済みならfalse
+        // 現在位置が壁かどうかを調べる
+        if (startX == posX || startY == posY)
+        {
+            // 始点の壁だった場合は0
+            return 0;
+        }
+
+        // チェック済みなら0
         if (checkedList.PositionAt(posX, posY, FieldWidth))
         {
-            return false;
+            return 0;
         }
 
         // チェック済みとする
         checkedList.SetValuePosition(posX, posY, FieldWidth, true);
 
-        // 元のブロックと種類が違うブロックならfalse
-        if (blocks.PositionAt(posX, posY, FieldWidth).Kind != target)
+        // 元のブロックと種類が違うブロックなら0
+        if (block.Kind != target)
         {
-            return false;
+            return 0;
         }
 
-        // 調べようとしている方向が壁だったりフィールド外だったらtrueを返す
-        if (KIND.NONE == blocks.PositionAt(posX, posY, fieldWidth).Kind || !blocks.InField(posX, posY, FieldWidth))
+        // 現在位置が壁かどうか
+        if(posX == 0 || posY == 0 || posX == FieldWidth - 1 || posY == FieldWidth - 1)
         {
-            return true;
-        }
-        else
-        {
-            // 各方向のブロックを調べるために再帰する
-            var up = checkField(target, posX, posY + 1, startX, startY);
-            var down = checkField(target, posX, posY - 1, startX, startY);
-            var left = checkField(target, posX - 1, posY, startX, startY);
-            var right = checkField(target, posX + 1, posY, startX, startY);
 
-            var r = up || down || left || right;
-            // 判定結果を代入
-            blocks.PositionAt(posX, posY, FieldWidth).Deleting = r;
-
-            return r;
+            // その位置のブロックが、始点と同じ種類かどうかを判定
+            if (block.Kind == target )
+            {
+                block.Deleting = true;
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
+
+        // 各方向のブロックを調べるために再帰する
+        var up = checkField(target, posX, posY + 1, startX, startY);
+        var down = checkField(target, posX, posY - 1, startX, startY);
+        var left = checkField(target, posX - 1, posY, startX, startY);
+        var right = checkField(target, posX + 1, posY, startX, startY);
+
+        var r = up + down + left + right;
+        // 判定結果を代入
+        block.Deleting = r > 0 ? true : false;
+
+        return r > 0 ? r + 1 : 0;
     }
 }
