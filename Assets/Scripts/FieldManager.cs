@@ -14,10 +14,11 @@ public class FieldManager
 
     private int fieldWidth;
 
+    // フィールドの一辺大きさ
     public int FieldWidth { get { return fieldWidth; } }
 
-    // フィールドの季節の状態
-    public KIND FieldSeason { get; set; } = KIND.NONE;
+    public delegate void OnEarnedPoint(Events.EarnedPointEventArgs e);
+    public event OnEarnedPoint onEarnedPointEvent;
 
     /// <summary>
     /// フィールドをアップデートする
@@ -35,7 +36,9 @@ public class FieldManager
     /// 各壁から他の壁へ同じブロックが繋がっているかをチェックする
     /// </summary>
     public void Update()
-    {        
+    {
+        int deletedBlocks = 0;
+
         for (int y = 0; y < FieldWidth; ++y)
         {
             for (int x = 0; x < FieldWidth; ++x)
@@ -58,6 +61,7 @@ public class FieldManager
                             {
                                 block.Deleting = true;
                                 Debug.Log($"Delete count:{r + 1}");
+                                deletedBlocks += r + 1;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -82,6 +86,7 @@ public class FieldManager
                             {
                                 block.Deleting = true;
                                 Debug.Log($"Delete count:{r + 1}");
+                                deletedBlocks += r + 1;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -106,6 +111,7 @@ public class FieldManager
                             {
                                 block.Deleting = true;
                                 Debug.Log($"Delete count:{r + 1}");
+                                deletedBlocks += r + 1;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -130,6 +136,7 @@ public class FieldManager
                             {
                                 block.Deleting = true;
                                 Debug.Log($"Delete count:{r + 1}");
+                                deletedBlocks += r + 1;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -141,6 +148,12 @@ public class FieldManager
                     }
                 }
             }
+        }
+
+        if (deletedBlocks > 0)
+        {
+            var point = (int)Mathf.Pow(deletedBlocks, 1.5f);
+            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete"));
         }
     }
 

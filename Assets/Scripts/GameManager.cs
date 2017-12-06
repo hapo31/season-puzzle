@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Util;
 
 public class GameManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class GameManager : MonoBehaviour
     public Block blockPrefab;
     public Cursor cursorPrefab;
 
+    public InputManager PlayerInputManager;
     public Sprite BackgroundSprite;
     public int FieldLength;
     public float OffsetXPosition;
@@ -17,6 +19,8 @@ public class GameManager : MonoBehaviour
     public int KeyDelayFrame = 20;
     // キー押しっぱなしにしている間、処理を行う間隔
     public int KeyRepeatInterval = 5;
+
+    public Text ScoreText;
 
     private FieldManager fieldManager;
 
@@ -33,13 +37,24 @@ public class GameManager : MonoBehaviour
     private const float BASEX = 6.0f;
     private const float BASELENGTH = 2.6f;
 
-    public InputManager PlayerInputManager;
 
     private int frames = 0;
+    private int score = 0;
+
+    private int Score
+    {
+        get { return score; }
+        set
+        {
+            score = value;
+            ScoreText.text = score.ToString("000000000");
+        }
+    }
 
     // Use this for initialization
     void Start()
     {
+        Score = 0;
         for (var i = 0; i < FieldLength * FieldLength; ++i)
         {
             var obj = Instantiate(blockPrefab);
@@ -143,6 +158,12 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = true);
         PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = false);
 
+
+        // スコアを獲得したときの処理
+        fieldManager.onEarnedPointEvent += (r) =>
+        {
+            Score += r.Point;
+        };
     }
 
     // Update is called once per frame
