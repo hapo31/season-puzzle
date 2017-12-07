@@ -152,6 +152,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a77580381614fba43b794a5ccccdfabf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &284802066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 284802067}
+  - component: {fileID: 284802069}
+  - component: {fileID: 284802068}
+  m_Layer: 5
+  m_Name: Score
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &284802067
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 284802066}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 255.13, y: 255.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 616778709}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 255.13, y: 255.4}
+  m_SizeDelta: {x: 328.75, y: 54.3}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &284802068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 284802066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: ffd18e4e0695b7548a6b39eb78bc0f4a, type: 3}
+    m_FontSize: 40
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 100
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 000000000
+--- !u!222 &284802069
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 284802066}
 --- !u!1 &520965180
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,13 +257,14 @@ MonoBehaviour:
     type: 2}
   cursorPrefab: {fileID: 114993630339100726, guid: be02053c7e3aa754d99f7a5e6069c2bc,
     type: 2}
+  PlayerInputManager: {fileID: 22596544}
   BackgroundSprite: {fileID: 0}
   FieldLength: 7
   OffsetXPosition: -3.2
   OffsetYPosition: -3.95
   KeyDelayFrame: 20
   KeyRepeatInterval: 5
-  PlayerInputManager: {fileID: 22596544}
+  ScoreText: {fileID: 284802068}
 --- !u!4 &520965182
 Transform:
   m_ObjectHideFlags: 0
@@ -285,10 +360,11 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 616778705}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 579.5, y: 282.5, z: 10}
+  m_LocalPosition: {x: 574.5, y: 279.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1018418946}
+  - {fileID: 284802067}
   m_Father: {fileID: 1321618219}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
