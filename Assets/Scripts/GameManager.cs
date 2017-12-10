@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     // キー押しっぱなしにしている間、処理を行う間隔
     public int KeyRepeatInterval = 5;
 
+    // ブロックを消したあと再生成されるまでのフレーム数
+    public int BlockRegenerateTime = 300;
+
     public Text ScoreText;
 
     private FieldManager fieldManager;
@@ -90,7 +93,8 @@ public class GameManager : MonoBehaviour
         cursor.PositionX = FieldLength / 2;
         cursor.PositionY = FieldLength / 2;
 
-        fieldManager = new FieldManager(blocks, FieldLength);
+        var settings = new FieldSettings { BlockRegenerateFrame = BlockRegenerateTime, FieldWidth = FieldLength };
+        fieldManager = new FieldManager(blocks, settings);
 
         // キー操作の定義
 

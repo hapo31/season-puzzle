@@ -12,10 +12,10 @@ public class FieldManager
 
     private bool[] checkedList;
 
-    private int fieldWidth;
+    private FieldSettings settings;
 
     // フィールドの一辺大きさ
-    public int FieldWidth { get { return fieldWidth; } }
+    public int FieldWidth { get { return settings.FieldWidth; } }
 
     public delegate void OnEarnedPoint(Events.EarnedPointEventArgs e);
     public event OnEarnedPoint onEarnedPointEvent;
@@ -25,10 +25,10 @@ public class FieldManager
     /// </summary>
     /// <param name="blocks"></param>
     /// <param name="fieldWidth"></param>
-    public FieldManager(List<Block> blocks, int fieldWidth)
+    public FieldManager(List<Block> blocks, FieldSettings settings)
     {
         this.blocks = blocks;
-        this.fieldWidth = fieldWidth;
+        this.settings = settings;
         checkedList = new bool[blocks.Count];
     }
 
@@ -36,6 +36,21 @@ public class FieldManager
     /// 各壁から他の壁へ同じブロックが繋がっているかをチェックする
     /// </summary>
     public void Update()
+    {
+        var deletedBlocks = DeleteBlock();
+        if (deletedBlocks > 0)
+        {
+            var point = (int)Mathf.Pow(deletedBlocks, 1.5f);
+            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete"));
+        }
+        UpdateBlocks();
+    }
+
+    /// <summary>
+    /// ブロック消去処理を行う
+    /// </summary>
+    /// <returns>消したブロック数</returns>
+    public int DeleteBlock()
     {
         int deletedBlocks = 0;
 
@@ -150,13 +165,30 @@ public class FieldManager
             }
         }
 
-        if (deletedBlocks > 0)
-        {
-            var point = (int)Mathf.Pow(deletedBlocks, 1.5f);
-            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete"));
-        }
+        return deletedBlocks;
     }
 
+    /// <summary>
+    /// 消去フラグが付いているブロックを再生成したりする
+    /// </summary>
+    /// <returns></returns>
+    public void UpdateBlocks()
+    {
+        for (int i = 0; i < blocks.Count; ++i)
+        {
+            var block = blocks[i];
+            if (block.Deleting)
+            {
+                block.DeletedFrame += 1;
+                // 指定フレーム数が経ったらブロックを再生成
+                if (block.DeletedFrame >= settings.BlockRegenerateFrame)
+                {
+                    block.Deleting = false;
+                    block.SetRandomBlock();
+                }
+            }
+        }
+    }
     
     private int checkField(KIND target, int posX, int posY, int startX, int startY)
     {
@@ -217,4 +249,13 @@ public class FieldManager
 
         return r > 0 ? r + 1 : 0;
     }
+}
+
+/// <summary>
+/// フィールドの設定データ
+/// </summary>
+public class FieldSettings
+{
+    public int BlockRegenerateFrame { get; set; }
+    public int FieldWidth { get; set; }
 }

@@ -5,6 +5,10 @@ using UnityEngine;
 public class Block : MonoBehaviour {
 
     private KIND kind;
+    private int regenerateFrame = 300;
+    private int deletedFrame = 0;
+
+    private SpriteMask mask;
 
     public KIND Kind
     {
@@ -24,6 +28,9 @@ public class Block : MonoBehaviour {
     }
 
     private bool deleting;
+    /// <summary>
+    /// 消去中フラグ
+    /// </summary>
     public bool Deleting
     {
         get { return deleting; }
@@ -31,16 +38,34 @@ public class Block : MonoBehaviour {
         {
             deleting = value;
             if (value) {
-                spriteRenderer.sprite = NoneSprite;
+                spriteRenderer.sprite = DeletedSprite;
             }
             else
             {
                 spriteRenderer.sprite = GetKindSprite(kind);
+                deletedFrame = 0;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 消去してから経ったフレーム数
+    /// </summary>
+    public int DeletedFrame
+    {
+        get { return deletedFrame; }
+        set
+        {
+            if (deleting)
+            {
+                deletedFrame = value;
+                //mask.transform.position = new Vector3()
             }
         }
     }
 
     public Sprite NoneSprite;
+    public Sprite DeletedSprite;
     public Sprite SpringSprite;
     public Sprite SummerSprite;
     public Sprite FallSprite;
@@ -48,15 +73,17 @@ public class Block : MonoBehaviour {
 
     SpriteRenderer spriteRenderer;
     
-    Block(KIND kind = KIND.NONE)
+    Block(KIND kind, int regenerateFrame)
     {
         this.kind = kind;
+        this.regenerateFrame = regenerateFrame;
     }
 
 	// Use this for initialization
 	void Start () {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = GetKindSprite(this.kind);
+        mask = GetComponent<SpriteMask>();
 
         // スプライトの見た目が初期化されていない可能性があるのでここで更新する
         Kind = kind;
@@ -66,7 +93,6 @@ public class Block : MonoBehaviour {
 	void Update () {
 		
 	}
-
 
     private Sprite GetKindSprite(KIND kind)
     {
