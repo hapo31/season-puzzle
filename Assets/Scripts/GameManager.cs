@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     // ブロックを消したあと再生成されるまでのフレーム数
     public int BlockRegenerateTime = 300;
 
+    // スコア表示の桁数を表示するときのフォーマット
+    private string ScoreTextFormat;
     public Text ScoreText;
 
     private FieldManager fieldManager;
@@ -50,13 +52,14 @@ public class GameManager : MonoBehaviour
         set
         {
             score = value;
-            ScoreText.text = score.ToString("000000000");
+            ScoreText.text = score.ToString(ScoreTextFormat);
         }
     }
 
     // Use this for initialization
     void Start()
     {
+        ScoreTextFormat = new string('0', ScoreText.text.Length);
         Score = 0;
         for (var i = 0; i < FieldLength * FieldLength; ++i)
         {

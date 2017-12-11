@@ -40,7 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f12f53bfc151e448a0e47b3fc2c47b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoneSprite: {fileID: 21300000, guid: 4142ff4880afe4049b110bc0bd3391de, type: 3}
+  NoneSprite: {fileID: 21300000, guid: 5b8b0a41b95b9bf4282103d525cabf72, type: 3}
   DeletedSprite: {fileID: 21300000, guid: 0b45dfcdb98733d4ca7b9f03ddede2ca, type: 3}
   SpringSprite: {fileID: 21300000, guid: 296c4b7309ff8bb429a20c9c85e4f2e9, type: 3}
   SummerSprite: {fileID: 21300000, guid: 8e490ac1c7235ce428480ceaa81c0766, type: 3}
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -63627571
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4142ff4880afe4049b110bc0bd3391de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

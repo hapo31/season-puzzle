@@ -5,6 +5,8 @@ using Util;
 
 public class Cursor : MonoBehaviour {
 
+    private AudioSource moveSE;
+
     public int PositionX
     {
         get { return x; }
@@ -46,6 +48,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y - 1);
         if (r)
         {
+            moveSE.Play();
             --PositionY;
             SpriteUpdate();
         } 
@@ -61,6 +64,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y + 1);
         if (r)
         {
+            moveSE.Play();
             ++PositionY;
             SpriteUpdate();
         }
@@ -76,6 +80,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x - 1, y);
         if (r)
         {
+            moveSE.Play();
             --PositionX;
             SpriteUpdate();
         }
@@ -91,6 +96,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x + 1, y);
         if (r)
         {
+            moveSE.Play();
             ++PositionX;
             SpriteUpdate();
         }
@@ -237,6 +243,7 @@ public class Cursor : MonoBehaviour {
 	void Start ()
     {
         cursor = GetComponent<SpriteRenderer>();
+        moveSE = GetComponent<AudioSource>();
         SpriteUpdate();
     }
 	
