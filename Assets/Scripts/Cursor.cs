@@ -5,7 +5,12 @@ using Util;
 
 public class Cursor : MonoBehaviour {
 
-    private AudioSource moveSE;
+    // カーソル移動時のSE
+    public AudioClip MoveSE;
+    // ブロック選択時のSE
+    public AudioClip HoldSE;
+
+    private AudioSource audio;
 
     public int PositionX
     {
@@ -27,9 +32,27 @@ public class Cursor : MonoBehaviour {
         }
     }
 
+    private bool hold;
+    public bool Hold
+    {
+        get
+        {
+            return hold;
+        }
+
+        set
+        {
+            if (value && !hold)
+            {
+                audio.PlayOneShot(HoldSE);
+            }
+            hold = value;
+        }
+    }
+
     public int MaxLength;
 
-    public bool Hold { get; set; }
+    
 
     private int x;
     private int y;
@@ -48,7 +71,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y - 1);
         if (r)
         {
-            moveSE.Play();
+            audio.PlayOneShot(MoveSE);
             --PositionY;
             SpriteUpdate();
         } 
@@ -64,7 +87,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y + 1);
         if (r)
         {
-            moveSE.Play();
+            audio.PlayOneShot(MoveSE);
             ++PositionY;
             SpriteUpdate();
         }
@@ -80,7 +103,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x - 1, y);
         if (r)
         {
-            moveSE.Play();
+            audio.PlayOneShot(MoveSE);
             --PositionX;
             SpriteUpdate();
         }
@@ -96,7 +119,7 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x + 1, y);
         if (r)
         {
-            moveSE.Play();
+            audio.PlayOneShot(MoveSE);
             ++PositionX;
             SpriteUpdate();
         }
@@ -243,7 +266,7 @@ public class Cursor : MonoBehaviour {
 	void Start ()
     {
         cursor = GetComponent<SpriteRenderer>();
-        moveSE = GetComponent<AudioSource>();
+        audio = GetComponent<AudioSource>();
         SpriteUpdate();
     }
 	

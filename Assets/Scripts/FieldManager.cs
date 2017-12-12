@@ -37,10 +37,11 @@ public class FieldManager
     /// </summary>
     public void Update()
     {
-        var deletedBlocks = DeleteBlock();
-        if (deletedBlocks > 0)
+        var deleteBlockInfo = DeleteBlock();
+        if (deleteBlockInfo.Deleted > 0)
         {
-            var point = (int)Mathf.Pow(deletedBlocks, 1.5f);
+            // 得点計算
+            var point = deleteBlockInfo.Deleted * deleteBlockInfo.WallConnected * 10;
             onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete"));
         }
         UpdateBlocks();
@@ -50,9 +51,9 @@ public class FieldManager
     /// ブロック消去処理を行う
     /// </summary>
     /// <returns>消したブロック数</returns>
-    public int DeleteBlock()
+    private DeleteBlockInfo DeleteBlock()
     {
-        int deletedBlocks = 0;
+        var deletedInfo = new DeleteBlockInfo();
 
         for (int y = 0; y < FieldWidth; ++y)
         {
@@ -72,11 +73,11 @@ public class FieldManager
                         {
                             var kind = blocks.PositionAt(x, y + 1, FieldWidth).Kind;
                             var r = checkField(kind, x, y + 1, -1, y);
-                            if (r > 0)
+                            if (r?.Deleted > 0)
                             {
                                 block.Deleting = true;
-                                Debug.Log($"Delete count:{r + 1}");
-                                deletedBlocks += r + 1;
+                                deletedInfo.Deleted += r.Value.Deleted + 1;
+                                deletedInfo.WallConnected += r.Value.WallConnected;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -97,11 +98,11 @@ public class FieldManager
                         {
                             var kind = blocks.PositionAt(x + 1, y, FieldWidth).Kind;
                             var r = checkField(kind, x + 1, y, x, -1);
-                            if (r > 0)
+                            if (r?.Deleted > 0)
                             {
                                 block.Deleting = true;
-                                Debug.Log($"Delete count:{r + 1}");
-                                deletedBlocks += r + 1;
+                                deletedInfo.Deleted += r.Value.Deleted + 1;
+                                deletedInfo.WallConnected += r.Value.WallConnected;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -122,11 +123,11 @@ public class FieldManager
                         {
                             var kind = blocks.PositionAt(x - 1, y, FieldWidth).Kind;
                             var r = checkField(kind, x - 1, y, x, -1);
-                            if (r > 0)
+                            if (r?.Deleted > 0)
                             {
                                 block.Deleting = true;
-                                Debug.Log($"Delete count:{r + 1}");
-                                deletedBlocks += r + 1;
+                                deletedInfo.Deleted += r.Value.Deleted + 1;
+                                deletedInfo.WallConnected += r.Value.WallConnected;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -147,11 +148,11 @@ public class FieldManager
                         {
                             var kind = blocks.PositionAt(x, y - 1, FieldWidth).Kind;
                             var r = checkField(kind, x, y - 1, -1, y);
-                            if (r > 0)
+                            if (r?.Deleted > 0)
                             {
                                 block.Deleting = true;
-                                Debug.Log($"Delete count:{r + 1}");
-                                deletedBlocks += r + 1;
+                                deletedInfo.Deleted += r.Value.Deleted + 1;
+                                deletedInfo.WallConnected += r.Value.WallConnected;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -165,7 +166,7 @@ public class FieldManager
             }
         }
 
-        return deletedBlocks;
+        return deletedInfo;
     }
 
     /// <summary>
@@ -190,26 +191,26 @@ public class FieldManager
         }
     }
     
-    private int checkField(KIND target, int posX, int posY, int startX, int startY)
+    private DeleteBlockInfo? checkField(KIND target, int posX, int posY, int startX, int startY)
     {
         var block = blocks.PositionAt(posX, posY, FieldWidth);
         // 消去中ブロックなら0
         if (block.Deleting)
         {
-            return 0;
+            return null;
         }
 
         // 現在位置が壁かどうかを調べる
         if (startX == posX || startY == posY)
         {
             // 始点の壁だった場合は0
-            return 0;
+            return null;
         }
 
         // チェック済みなら0
         if (checkedList.PositionAt(posX, posY, FieldWidth))
         {
-            return 0;
+            return null;
         }
 
         // チェック済みとする
@@ -218,22 +219,21 @@ public class FieldManager
         // 元のブロックと種類が違うブロックなら0
         if (block.Kind != target)
         {
-            return 0;
+            return null;
         }
 
         // 現在位置が壁かどうか
         if(posX == 0 || posY == 0 || posX == FieldWidth - 1 || posY == FieldWidth - 1)
         {
-
             // その位置のブロックが、始点と同じ種類かどうかを判定
             if (block.Kind == target )
             {
                 block.Deleting = true;
-                return 1;
+                return new DeleteBlockInfo(1, 1);
             }
             else
             {
-                return 0;
+                return null;
             }
         }
 
@@ -245,9 +245,17 @@ public class FieldManager
 
         var r = up + down + left + right;
         // 判定結果を代入
-        block.Deleting = r > 0 ? true : false;
+        block.Deleting = r.Deleted > 0 ? true : false;
 
-        return r > 0 ? r + 1 : 0;
+        if (r.Deleted > 0)
+        {
+            r.Deleted += 1;
+            return r;
+        } 
+        else
+        {
+            return null;
+        }
     }
 }
 
@@ -258,4 +266,30 @@ public class FieldSettings
 {
     public int BlockRegenerateFrame { get; set; }
     public int FieldWidth { get; set; }
+}
+
+struct DeleteBlockInfo
+{
+    // 何方向の壁とつながっていたか
+    public int WallConnected;
+    // 消したブロックの数
+    public int Deleted;
+
+    public DeleteBlockInfo(int deleted = 0, int connected = 0)
+    {
+        Deleted = deleted;
+        WallConnected = connected;
+    }
+
+    public static DeleteBlockInfo operator+(DeleteBlockInfo? leftVal, DeleteBlockInfo? rightVal)
+    {
+        int deleted = 0, wall = 0;
+
+        deleted += leftVal != null ? leftVal.Value.Deleted : 0;
+        deleted += rightVal != null ? rightVal.Value.Deleted : 0;
+        wall += leftVal != null ? leftVal.Value.WallConnected : 0;
+        wall += rightVal != null ? rightVal.Value.WallConnected : 0;
+
+        return new DeleteBlockInfo(deleted, wall);
+    }
 }
