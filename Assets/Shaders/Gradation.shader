@@ -4,46 +4,52 @@ Shader "Custom/Gradation" {
 	Properties
 	{
 		_MainTex("2D Texture", 2D) = "white" {}
-		_MyColor("Some Color", Color) = (1,1,1,1)
+		_TexColor("Color", Color) = (1,1,1,1)
 	}
-	SubShader
-	{
-		Pass {
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+		SubShader
+		{
+			Tags{ "RenderType" = "Transparent" }
+			Pass {
+				CGPROGRAM
+				#pragma vertex vert
+				#pragma fragment frag
 
-			// VS2015のグラフィックデバックON
-			#pragma enable_d3d11_debug_symbols
+				// VS2015のグラフィックデバックON
+				#pragma enable_d3d11_debug_symbols
 
-			struct VertexInput {
-				float4 pos:  POSITION;    // 3D空間座標
-				float2 uv:   TEXCOORD0;   // テクスチャ座標
-			};
+				uniform fixed4 _TexColor;
+				uniform sampler2D _MainTex;
 
-			struct VertexOutput {
-				float4 v:    SV_POSITION; // 2D座標
-				float2 uv:   TEXCOORD0;   // テクスチャ座標
-			};
+				struct VertexInput {
+					float4 pos:  POSITION;    // 3D空間座標
+					float2 uv:   TEXCOORD0;   // テクスチャ座標
+				};
 
-			// 頂点 shader
-			VertexOutput vert(VertexInput input)
-			{
-				VertexOutput output;
-				output.v = UnityObjectToClipPos(input.pos);
-				output.uv = input.uv;
+				struct v2f {
+					float4 v:    SV_POSITION; // 2D座標
+					half2 uv:   TEXCOORD0;   // テクスチャ座標
+					fixed4 color : COLOR;
+				};
 
-				return output;
-			}
+				// 頂点 shader
+				v2f vert(VertexInput input)
+				{
+					v2f output;
+					output.v = UnityObjectToClipPos(input.pos);
+					output.uv = input.uv;
 
-			// ピクセル shader
-			fixed4 frag(VertexOutput output) : SV_Target
-			{
-				float2 tex = output.uv;
-				// 黄色→白色のグラデーション
-				return fixed4(1.0 - tex.y, 1.0 - tex.y, 1.0 - tex.y, 1.0);
-			}
-			ENDCG
+					return output;
+				}
+
+				// ピクセル shader
+				fixed4 frag(v2f IN) : SV_Target
+				{
+					half4 color = _TexColor * tex2D(_MainTex, IN.uv);
+					float texy = IN.uv.y;
+					color.rgb += fixed3(1.0 - texy, 1.0 - texy, 1.0 - texy);
+					return color;
+				}
+				ENDCG
 		}
 	}
 }

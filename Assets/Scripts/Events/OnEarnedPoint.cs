@@ -10,14 +10,37 @@ namespace Events
     {
         private readonly int point;
         private readonly string reason;
+        private readonly Block.KIND kind;
 
-        public int Point { get { return point; } }
-        public string Reason { get { return reason; } }
+        public Block.KIND Kind
+        {
+            get
+            {
+                return kind;
+            }
+        }
 
-        public EarnedPointEventArgs(int point, string reason)
+        public int Point
+        {
+            get
+            {
+                return point;
+            }
+        }
+
+        public string Reason
+        {
+            get
+            {
+                return reason;
+            }
+        }
+
+        public EarnedPointEventArgs(int point, string reason, Block.KIND kind)
         {
             this.point = point;
             this.reason = reason;
+            this.kind = kind;
         }
     }
 }

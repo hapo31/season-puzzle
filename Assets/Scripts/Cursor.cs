@@ -52,10 +52,8 @@ public class Cursor : MonoBehaviour {
 
     public int MaxLength;
 
-    
-
-    private int x;
-    private int y;
+    private int x = -1;
+    private int y = -1;
     
     //private List<Block.KIND> fieldData;
 
@@ -71,7 +69,14 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y - 1);
         if (r)
         {
-            audio.PlayOneShot(MoveSE);
+            if (Hold)
+            {
+                audio.PlayOneShot(HoldSE);
+            }
+            else
+            {
+                audio.PlayOneShot(MoveSE);
+            }
             --PositionY;
             SpriteUpdate();
         } 
@@ -87,7 +92,14 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x, y + 1);
         if (r)
         {
-            audio.PlayOneShot(MoveSE);
+            if (Hold)
+            {
+                audio.PlayOneShot(HoldSE);
+            }
+            else
+            {
+                audio.PlayOneShot(MoveSE);
+            }
             ++PositionY;
             SpriteUpdate();
         }
@@ -103,7 +115,14 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x - 1, y);
         if (r)
         {
-            audio.PlayOneShot(MoveSE);
+            if (Hold)
+            {
+                audio.PlayOneShot(HoldSE);
+            }
+            else
+            {
+                audio.PlayOneShot(MoveSE);
+            }
             --PositionX;
             SpriteUpdate();
         }
@@ -119,7 +138,14 @@ public class Cursor : MonoBehaviour {
         var r = isMovablePosition(x + 1, y);
         if (r)
         {
-            audio.PlayOneShot(MoveSE);
+            if (Hold)
+            {
+                audio.PlayOneShot(HoldSE);
+            }
+            else
+            {
+                audio.PlayOneShot(MoveSE);
+            }
             ++PositionX;
             SpriteUpdate();
         }
@@ -255,7 +281,7 @@ public class Cursor : MonoBehaviour {
     // カーソルの座標をブロックに合わせる
     private void SpriteUpdate()
     {
-        if (cursor != null)
+        if (cursor != null && (PositionX != -1 || PositionY != -1))
         {
             var pos = blocks.PositionAt(PositionX, PositionY, MaxLength).transform.position;
             cursor.transform.position = pos;
@@ -267,11 +293,10 @@ public class Cursor : MonoBehaviour {
     {
         cursor = GetComponent<SpriteRenderer>();
         audio = GetComponent<AudioSource>();
-        SpriteUpdate();
     }
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	void Update () { 
+        SpriteUpdate();
+    }
 }

@@ -38,12 +38,14 @@ public class GameManager : MonoBehaviour
     // カーソルのゲームオブジェクト
     private Cursor cursor;
 
+    // 背景の管理コンポーネント
+    private BackgroundController backgroundContoroller;
+
     private const float BASEY = 3.0f;
     private const float BASEX = 6.0f;
     private const float BASELENGTH = 2.6f;
 
-
-    private int frames = 0;
+    private int showScore = 0;
     private int score = 0;
 
     private int Score
@@ -52,13 +54,14 @@ public class GameManager : MonoBehaviour
         set
         {
             score = value;
-            ScoreText.text = score.ToString(ScoreTextFormat);
         }
     }
 
     // Use this for initialization
     void Start()
     {
+        backgroundContoroller = GameObject.Find("InfomationBackground").GetComponent<BackgroundController>();
+
         ScoreTextFormat = new string('0', ScoreText.text.Length);
         Score = 0;
         for (var i = 0; i < FieldLength * FieldLength; ++i)
@@ -169,7 +172,9 @@ public class GameManager : MonoBehaviour
         // スコアを獲得したときの処理
         fieldManager.onEarnedPointEvent += (r) =>
         {
+            Debug.Log($"{r.Reason} {r.Point} {r.Kind}");
             Score += r.Point;
+            backgroundContoroller.ChangeTheme(r.Kind);
         };
     }
 
@@ -177,12 +182,21 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         FieldUpdate();
-
+        ScoreUpdate();
     }
 
     void FieldUpdate()
     {
         fieldManager.Update();
+    }
+
+    private void ScoreUpdate()
+    {
+        if (score > showScore)
+        {
+            showScore += 5;
+            ScoreText.text = showScore.ToString(ScoreTextFormat);
+        }
     }
 
     Vector3 GetBlockPosition(int x, int y)

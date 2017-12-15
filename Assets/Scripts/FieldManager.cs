@@ -20,6 +20,9 @@ public class FieldManager
     public delegate void OnEarnedPoint(Events.EarnedPointEventArgs e);
     public event OnEarnedPoint onEarnedPointEvent;
 
+    public delegate void OnBlockGenerate(int count);
+    public event OnBlockGenerate onBlockGenerate;
+
     /// <summary>
     /// フィールドをアップデートする
     /// </summary>
@@ -42,7 +45,7 @@ public class FieldManager
         {
             // 得点計算
             var point = deleteBlockInfo.Deleted * deleteBlockInfo.WallConnected * 10;
-            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete"));
+            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete", deleteBlockInfo.Kind));
         }
         UpdateBlocks();
     }
@@ -78,6 +81,7 @@ public class FieldManager
                                 block.Deleting = true;
                                 deletedInfo.Deleted += r.Value.Deleted + 1;
                                 deletedInfo.WallConnected += r.Value.WallConnected;
+                                deletedInfo.Kind = kind;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -103,6 +107,7 @@ public class FieldManager
                                 block.Deleting = true;
                                 deletedInfo.Deleted += r.Value.Deleted + 1;
                                 deletedInfo.WallConnected += r.Value.WallConnected;
+                                deletedInfo.Kind = kind;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -128,6 +133,7 @@ public class FieldManager
                                 block.Deleting = true;
                                 deletedInfo.Deleted += r.Value.Deleted + 1;
                                 deletedInfo.WallConnected += r.Value.WallConnected;
+                                deletedInfo.Kind = kind;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -153,6 +159,7 @@ public class FieldManager
                                 block.Deleting = true;
                                 deletedInfo.Deleted += r.Value.Deleted + 1;
                                 deletedInfo.WallConnected += r.Value.WallConnected;
+                                deletedInfo.Kind = kind;
                                 break;
                             }
                             // チェック済みリストをリセット
@@ -175,6 +182,8 @@ public class FieldManager
     /// <returns></returns>
     public void UpdateBlocks()
     {
+        var generateCount = 0;
+
         for (int i = 0; i < blocks.Count; ++i)
         {
             var block = blocks[i];
@@ -185,9 +194,16 @@ public class FieldManager
                 if (block.DeletedFrame >= settings.BlockRegenerateFrame)
                 {
                     block.Deleting = false;
+
+                    generateCount ++;
+                    
                     block.SetRandomBlock();
                 }
             }
+        }
+        if (generateCount > 0)
+        {
+            onBlockGenerate?.Invoke(generateCount);
         }
     }
     
@@ -274,11 +290,14 @@ struct DeleteBlockInfo
     public int WallConnected;
     // 消したブロックの数
     public int Deleted;
+    // 直前に消したブロックの種類
+    public KIND Kind;
 
-    public DeleteBlockInfo(int deleted = 0, int connected = 0)
+    public DeleteBlockInfo(int deleted = 0, int connected = 0, KIND kind = KIND.NONE)
     {
         Deleted = deleted;
         WallConnected = connected;
+        Kind = kind;
     }
 
     public static DeleteBlockInfo operator+(DeleteBlockInfo? leftVal, DeleteBlockInfo? rightVal)

@@ -133,6 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34f6a8b384b7b4f46ac5ef2cd3b55a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MoveSE: {fileID: 8300000, guid: f8592dbb7d6fa0543928a59a006e25f3, type: 3}
+  HoldSE: {fileID: 8300000, guid: 763bc90ce9c97df4b9bd3f3859189b2e, type: 3}
   MaxLength: 0
 --- !u!212 &212906187006761482
 SpriteRenderer:
@@ -177,4 +179,4 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
