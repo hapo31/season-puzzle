@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     public int FieldLength;
     public float OffsetXPosition;
     public float OffsetYPosition;
+    public int GameTimeInMilliSeconds = 1000 * 60 * 2;
+    public Text ScoreText;
+    public Text HiScoreText;
+    public Text TimeText;
 
     // キーを押しっぱなしにしたあと反応しないフレーム数
     public int KeyDelayFrame = 20;
@@ -25,7 +29,6 @@ public class GameManager : MonoBehaviour
 
     // スコア表示の桁数を表示するときのフォーマット
     private string ScoreTextFormat;
-    public Text ScoreText;
 
     private FieldManager fieldManager;
 
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     private int showScore = 0;
     private int score = 0;
+    private int hiScore = 0;
 
     private int Score
     {
@@ -60,6 +64,13 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
+        // この辺でハイスコア読み込み処理
+        // hiScore = hogehoge();
+
+        // 時間表示の更新
+        TimeText.text = MilliSecondsToString.format(GameTimeInMilliSeconds);
+        // 背景コントローラーの取得
         backgroundContoroller = GameObject.Find("InfomationBackground").GetComponent<BackgroundController>();
 
         ScoreTextFormat = new string('0', ScoreText.text.Length);
@@ -183,6 +194,7 @@ public class GameManager : MonoBehaviour
     {
         FieldUpdate();
         ScoreUpdate();
+        TimeUpdate();
     }
 
     void FieldUpdate()
@@ -196,6 +208,23 @@ public class GameManager : MonoBehaviour
         {
             showScore += 5;
             ScoreText.text = showScore.ToString(ScoreTextFormat);
+        }
+
+        // ハイスコアを上回ったら更新
+        if (score > hiScore)
+        {
+            hiScore = showScore;
+            HiScoreText.text = showScore.ToString(ScoreTextFormat);
+        }
+    }
+
+    // 残り時間の更新
+    private void TimeUpdate()
+    {
+        if (GameTimeInMilliSeconds > 0)
+        {
+            GameTimeInMilliSeconds -= 16;
+            TimeText.text = MilliSecondsToString.format(GameTimeInMilliSeconds);
         }
     }
 

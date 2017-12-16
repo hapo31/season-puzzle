@@ -45,7 +45,7 @@ public class FieldManager
         {
             // 得点計算
             var point = deleteBlockInfo.Deleted * deleteBlockInfo.WallConnected * 10;
-            onEarnedPointEvent(new Events.EarnedPointEventArgs(point, "block_delete", deleteBlockInfo.Kind));
+            onEarnedPointEvent?.Invoke(new Events.EarnedPointEventArgs(point, "block_delete", deleteBlockInfo.Kind));
         }
         UpdateBlocks();
     }

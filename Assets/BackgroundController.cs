@@ -52,6 +52,7 @@ public class BackgroundController : MonoBehaviour {
                 break;
         }
         backgroundRenderer.sprite = newSprite;
+        backgroundRenderer.transform.localScale = new Vector3(1.5f, 1.5f, 1.0f);
     }
 
 }
