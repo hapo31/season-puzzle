@@ -10,14 +10,17 @@ public class GameManager : MonoBehaviour
     public Cursor cursorPrefab;
 
     public InputManager PlayerInputManager;
-    public Sprite BackgroundSprite;
     public int FieldLength;
     public float OffsetXPosition;
     public float OffsetYPosition;
     public int GameTimeInMilliSeconds = 1000 * 60 * 2;
+    public AudioClip BlockRegenerateSE;
     public Text ScoreText;
     public Text HiScoreText;
     public Text TimeText;
+
+    private AudioSource bgm;
+    private AudioSource audioSource;
 
     // キーを押しっぱなしにしたあと反応しないフレーム数
     public int KeyDelayFrame = 20;
@@ -64,6 +67,9 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        var audio = GetComponents<AudioSource>();
+        audioSource = audio[0];
+
 
         // この辺でハイスコア読み込み処理
         // hiScore = hogehoge();
@@ -186,6 +192,11 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{r.Reason} {r.Point} {r.Kind}");
             Score += r.Point;
             backgroundContoroller.ChangeTheme(r.Kind);
+        };
+
+        fieldManager.onBlockGenerate += (r) =>
+        {
+            audioSource.PlayOneShot(BlockRegenerateSE);
         };
     }
 

@@ -223,13 +223,13 @@
     <Compile Include="Assets\BackgroundController.cs" />
     <Compile Include="Assets\DebugUIText.cs" />
     <Compile Include="Assets\InputManager.cs" />
-    <Compile Include="Assets\KeyManager.cs" />
     <Compile Include="Assets\Scripts\Block.cs" />
     <Compile Include="Assets\Scripts\Cursor.cs" />
     <Compile Include="Assets\Scripts\Events\OnEarnedPoint.cs" />
     <Compile Include="Assets\Scripts\FieldManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Util\ArrayPosition.cs" />
+    <Compile Include="Assets\Scripts\Util\ColorTransition.cs" />
     <Compile Include="Assets\Scripts\Util\ListPositionMappingExtendMethod.cs" />
     <Compile Include="Assets\Scripts\Util\MilliSecondsToString.cs" />
   </ItemGroup>

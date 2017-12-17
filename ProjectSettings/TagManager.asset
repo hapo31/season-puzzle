@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - SystemBackground
+  - DeepBackground
   layers:
   - Default
   - TransparentFX
@@ -42,7 +43,16 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
+  - name: Background3
+    uniqueID: 2142253083
+    locked: 0
+  - name: Background2
+    uniqueID: 11897633
+    locked: 0
+  - name: Background1
+    uniqueID: 377498985
+    locked: 0
+  - name: Background0
     uniqueID: 3155160361
     locked: 0
   - name: Block

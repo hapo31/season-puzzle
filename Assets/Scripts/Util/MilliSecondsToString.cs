@@ -12,7 +12,7 @@ namespace Util
         {
             if (milliseconds == 0)
             {
-                return "00:00:00";
+                return "00:00.00";
             }
             var min = milliseconds / 60000;
             var sec = milliseconds >= 1000 ? milliseconds / 1000 % 60 : 0;
