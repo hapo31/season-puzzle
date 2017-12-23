@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Util;
 
 public class GameManager : MonoBehaviour
@@ -206,6 +207,11 @@ public class GameManager : MonoBehaviour
         FieldUpdate();
         ScoreUpdate();
         TimeUpdate();
+
+        if (GameTimeInMilliSeconds <= 0)
+        {
+            SceneManager.LoadScene("title");
+        }
     }
 
     void FieldUpdate()
