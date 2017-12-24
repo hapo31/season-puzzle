@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
         // キー操作の定義
 
         // カーソルを左へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.LEFT, (key, frames) =>
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.LEFT, (frames) =>
         {
             if (cursor.Hold)
             {
@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.LEFT, KeyRepeatInterval, null);
 
         // カーソルを右へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.RIGHT, (key, frames) =>
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.RIGHT, (frames) =>
         {
             if (cursor.Hold)
             {
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.RIGHT, KeyRepeatInterval, null);
 
         // カーソルを上へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.UP, (key, frames) =>
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.UP, (frames) =>
         {
             if (cursor.Hold)
             {
@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.UP, KeyRepeatInterval, null);
 
         // カーソルを下へ移動
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.DOWN, (key, frames) =>
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.DOWN, (frames) =>
         {
             if (cursor.Hold)
             {
@@ -183,8 +183,8 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.DOWN, KeyRepeatInterval, null);
 
         // ブロックを選択
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = true);
-        PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (key, frames) => cursor.Hold = false);
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (frames) => cursor.Hold = true);
+        PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (frames) => cursor.Hold = false);
 
 
         // スコアを獲得したときの処理

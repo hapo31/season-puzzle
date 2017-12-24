@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour {
 
-    public delegate void OnKeyDown(KEYS key, int frames = 1);
-    public delegate void OnKeyDelay(KEYS key, int frames);
-    public delegate void OnKeyHold(KEYS key, int frames);
-    public delegate void OnKeyUp(KEYS key, int frames);
+    public delegate void OnKeyDown(int frames = 1);
+    public delegate void OnKeyDelay(int frames);
+    public delegate void OnKeyHold(int frames);
+    public delegate void OnKeyUp(int frames);
+
+    public bool EnableHoldHandler { get; set; } = true;
 
     private delegate bool PushButtonExpr();
 
@@ -71,39 +73,40 @@ public class InputManager : MonoBehaviour {
         var keyInt = (int)key;
         if (expr())
         {
+            Debug.Log($"{key.ToString()} {keyFrames[keyInt]}");
             keyFrames[keyInt] += 1;
             if (keyFrames[keyInt] == 1)
             {
                 //Debug.Log($"[OnDown] key:{key} {keyFrames[keyInt]}");
                 // ボタンが押された瞬間にハンドラを呼び出す
-                OnKeyDownDelegates[keyInt]?.Invoke(key);
+                OnKeyDownDelegates[keyInt]?.Invoke();
             }
             else if (keyFrames[keyInt] < OnKeyDelayDelegates[keyInt].frames)
             {
                 // 入力判定を発生させないディレイフレーム数が設定されている場合は、代わりにOnKeyDelayハンドラを呼び出す
                 //Debug.Log($"[OnDelay] key:{key} {keyFrames[keyInt]}");
-                OnKeyDelayDelegates[keyInt].Action?.Invoke(key, keyFrames[keyInt]);
+                OnKeyDelayDelegates[keyInt].Action?.Invoke(keyFrames[keyInt]);
             }
             else if (IsHoldInvoking(key)) 
             {
                 // キーが押されている間呼び出す
                 //Debug.Log($"[OnHold] key:{key} {keyFrames[keyInt]}");
-                if (OnKeyHoldDelegates[keyInt].Action == null)
+                if (EnableHoldHandler && OnKeyHoldDelegates[keyInt].Action == null)
                 {
                     // Holdハンドラがnullの場合はOnKeyDownハンドラを呼び出す
-                    OnKeyDownDelegates[keyInt]?.Invoke(key, keyFrames[keyInt]);
+                    OnKeyDownDelegates[keyInt]?.Invoke(keyFrames[keyInt]);
                 }
                 else
                 {
                     // Holdハンドラが設定されている場合はそのまま呼び出す
-                    OnKeyHoldDelegates[keyInt].Action?.Invoke(key, keyFrames[keyInt]);
+                    OnKeyHoldDelegates[keyInt].Action?.Invoke(keyFrames[keyInt]);
                 }
             }
         }
         else if(keyFrames[keyInt] != 0)
         {
             // ボタンが離された瞬間のハンドラを呼び出す
-            OnKeyUpDelegates[keyInt]?.Invoke(key, keyFrames[keyInt]);
+            OnKeyUpDelegates[keyInt]?.Invoke(keyFrames[keyInt]);
             // フレーム数をリセット
             //Debug.Log($"[OnUp] key:{key} {keyFrames[keyInt]}");
             keyFrames[keyInt] = 0;
