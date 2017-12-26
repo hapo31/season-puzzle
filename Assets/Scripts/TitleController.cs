@@ -12,6 +12,7 @@ public class TitleController : MonoBehaviour {
     public GameObject Cursor;
     public Color SelectedColor;
     public Color UnselectedColor;
+    public Image Curtain;
 
     public AudioClip Move;
     public AudioClip Enter;
@@ -62,14 +63,27 @@ public class TitleController : MonoBehaviour {
         Input.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (frames) =>
         {
             audioSource.PlayOneShot(Enter);
+            IEnumerator coroutine = null;
+
             switch(UIs[SelectedIndex].name)
             {
                 case "GameStart":
-                    SceneManager.LoadScene("main");
+                    coroutine = Fade(0.05f, ()=>
+                    {
+                        SceneManager.LoadScene("main");
+                    });
                     break;
                 case "Quit":
-                    Application.Quit();
+                    coroutine = Fade(0.01f, () =>
+                    {
+                        Application.Quit();
+                    });
                     break;
+            }
+
+            if (coroutine != null)
+            {
+                StartCoroutine(coroutine);
             }
         });
 
@@ -81,4 +95,17 @@ public class TitleController : MonoBehaviour {
     void Update () {
 		
 	}
+
+    delegate void ThenFunc();
+    IEnumerator Fade(float delta = 0.01f, ThenFunc then = null)
+    {
+        for (var f = 0f; f <= 1f; f += delta)
+        {
+            var c = Curtain.color;
+            c.a = f;
+            Curtain.color = c;
+            yield return null;
+        }
+        then?.Invoke();
+    }
 }

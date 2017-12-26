@@ -12,12 +12,15 @@
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2017.3.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -304,6 +307,8 @@
     <Compile Include="Assets\DebugUIText.cs" />
     <Compile Include="Assets\InputManager.cs" />
     <Compile Include="Assets\Scripts\Block.cs" />
+    <Compile Include="Assets\Scripts\CommonCoroutine\CoroutineBase.cs" />
+    <Compile Include="Assets\Scripts\CommonCoroutine\Fade.cs" />
     <Compile Include="Assets\Scripts\Cursor.cs" />
     <Compile Include="Assets\Scripts\Events\OnEarnedPoint.cs" />
     <Compile Include="Assets\Scripts\FieldManager.cs" />
