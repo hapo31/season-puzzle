@@ -5,9 +5,14 @@
 物音04(加工)
 https://maoudamashii.jokersounds.com/core.cgi?page=1&field=%E5%8A%B9%E6%9E%9C%E9%9F%B3%E7%B4%A0%E6%9D%90%3C%3E%E7%89%A9%E9%9F%B32
 
+メインBGM
 ヒーリング音楽01
 https://maoudamashii.jokersounds.com/core.cgi?page=1&field=%E9%AB%98%E9%9F%B3%E8%B3%AABGM%E7%B4%A0%E6%9D%90%3C%3E%E3%83%92%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0
 
 ボタン070
 ボタン064
+ボタン040
 http://www.kurage-kosho.info/system.html
+
+タイトルBGM
+https://maoudamashii.jokersounds.com/archives/bgm_maoudamashii_healing01.html

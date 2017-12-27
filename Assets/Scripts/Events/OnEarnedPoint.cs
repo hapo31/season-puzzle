@@ -11,6 +11,7 @@ namespace Events
         private readonly int point;
         private readonly string reason;
         private readonly Block.KIND kind;
+        private readonly int count;
 
         public Block.KIND Kind
         {
@@ -36,11 +37,14 @@ namespace Events
             }
         }
 
-        public EarnedPointEventArgs(int point, string reason, Block.KIND kind)
+        public int Count => count;
+
+        public EarnedPointEventArgs(int count, int point, string reason, Block.KIND kind)
         {
             this.point = point;
             this.reason = reason;
             this.kind = kind;
+            this.count = count;
         }
     }
 }

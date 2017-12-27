@@ -12,7 +12,7 @@ public class TitleController : MonoBehaviour {
     public GameObject Cursor;
     public Color SelectedColor;
     public Color UnselectedColor;
-    public Image Curtain;
+    public SpriteRenderer Curtain;
 
     public AudioClip Move;
     public AudioClip Enter;
@@ -45,7 +45,7 @@ public class TitleController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        UIs = UIParent.GetComponentsInChildren<Text>().ToList();
+        UIs = UIParent.GetComponentsInChildren<Text>().Where(v => v.tag == "Menu").ToList();
         Input.EnableHoldHandler = false;
 
         Input.RegisterOnKeyDownHandler(KEYS.UP, (frames) =>
@@ -68,13 +68,13 @@ public class TitleController : MonoBehaviour {
             switch(UIs[SelectedIndex].name)
             {
                 case "GameStart":
-                    coroutine = Fade(0.05f, ()=>
+                    coroutine = FadeOut(0.05f, ()=>
                     {
                         SceneManager.LoadScene("main");
                     });
                     break;
                 case "Quit":
-                    coroutine = Fade(0.01f, () =>
+                    coroutine = FadeOut(0.01f, () =>
                     {
                         Application.Quit();
                     });
@@ -89,6 +89,8 @@ public class TitleController : MonoBehaviour {
 
         audioSource = GetComponent<AudioSource>();
         SelectedIndex = 0;
+
+        StartCoroutine(FadeIn());
     }
 
     // Update is called once per frame
@@ -97,9 +99,21 @@ public class TitleController : MonoBehaviour {
 	}
 
     delegate void ThenFunc();
-    IEnumerator Fade(float delta = 0.01f, ThenFunc then = null)
+    IEnumerator FadeOut(float delta = 0.01f, ThenFunc then = null)
     {
         for (var f = 0f; f <= 1f; f += delta)
+        {
+            var c = Curtain.color;
+            c.a = f;
+            Curtain.color = c;
+            yield return null;
+        }
+        then?.Invoke();
+    }
+
+    IEnumerator FadeIn(float delta = 0.01f, ThenFunc then = null)
+    {
+        for (var f = 1f; f <= 1f; f -= delta)
         {
             var c = Curtain.color;
             c.a = f;

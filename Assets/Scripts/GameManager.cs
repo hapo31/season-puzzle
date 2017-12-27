@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Util;
+using Assets.Scripts.Util;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,14 +15,25 @@ public class GameManager : MonoBehaviour
     public int FieldLength;
     public float OffsetXPosition;
     public float OffsetYPosition;
-    public int GameTimeInMilliSeconds = 1000 * 60 * 2;
+    public int GameReadyFrames = 200;
+    public int GameTimeInMilliSeconds = 1000 * 60 * 2; // 2分
+    public AudioClip BlockDelete;
+    public AudioClip Ready;
+    public AudioClip Go;
+
     public AudioClip BlockRegenerateSE;
+
     public Text ScoreText;
     public Text HiScoreText;
     public Text TimeText;
 
+    public SpriteRenderer Curtain;
+
     private AudioSource bgm;
     private AudioSource audioSource;
+
+    private bool startFlag = false;
+    private bool readyFlag = false;
 
     // キーを押しっぱなしにしたあと反応しないフレーム数
     public int KeyDelayFrame = 20;
@@ -56,6 +68,8 @@ public class GameManager : MonoBehaviour
     private int score = 0;
     private int hiScore = 0;
 
+    private bool hiScoreUpdated = false;
+
     private int Score
     {
         get { return score; }
@@ -70,6 +84,7 @@ public class GameManager : MonoBehaviour
     {
         var audio = GetComponents<AudioSource>();
         audioSource = audio[0];
+        bgm = audio[1];
 
 
         // この辺でハイスコア読み込み処理
@@ -183,14 +198,29 @@ public class GameManager : MonoBehaviour
         PlayerInputManager.RegisterOnKeyHoldHandler(KEYS.DOWN, KeyRepeatInterval, null);
 
         // ブロックを選択
-        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (frames) => cursor.Hold = true);
-        PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (frames) => cursor.Hold = false);
+        PlayerInputManager.RegisterOnKeyDownHandler(KEYS.BLOCKCHANGE_A, (frames) =>
+        {
+            if (!startFlag)
+            {
+                return;
+            }
+            cursor.Hold = true;
+        });
+        PlayerInputManager.RegisterOnUpHandler(KEYS.BLOCKCHANGE_A, (frames) =>
+        {
+            if (!startFlag)
+            {
+                return;
+            }
+            cursor.Hold = false;
+        });
 
 
         // スコアを獲得したときの処理
         fieldManager.onEarnedPointEvent += (r) =>
         {
             Debug.Log($"{r.Reason} {r.Point} {r.Kind}");
+            StartCoroutine("BlockDeletePlay", r.Count);
             Score += r.Point;
             backgroundContoroller.ChangeTheme(r.Kind);
         };
@@ -199,18 +229,65 @@ public class GameManager : MonoBehaviour
         {
             audioSource.PlayOneShot(BlockRegenerateSE);
         };
+
+        var c = FadeIn(0.05f, () =>
+        {
+            Debug.Log("Fade finish");
+            readyFlag = true;
+        });
+
+        StartCoroutine(c);
     }
 
     // Update is called once per frame
     void Update()
     {
-        FieldUpdate();
-        ScoreUpdate();
-        TimeUpdate();
-
-        if (GameTimeInMilliSeconds <= 0)
+        if (!startFlag)
         {
-            SceneManager.LoadScene("title");
+            if (!readyFlag)
+            {
+                Debug.Log("Ready");
+                readyFlag = true;
+            }
+            else
+            {
+                if (GameReadyFrames <= 0)
+                {
+                    audioSource.PlayOneShot(Go);
+                    bgm.Play();
+                    Debug.Log("Start");
+                    startFlag = true;
+                }
+                else
+                {
+                    --GameReadyFrames;
+                }
+
+                if (GameReadyFrames % 60 == 0 && GameReadyFrames > 0)
+                {
+                    audioSource.PlayOneShot(Ready);
+                    Debug.Log($"{GameReadyFrames}");
+                }
+            }
+        }
+        else
+        {
+            FieldUpdate();
+            ScoreUpdate();
+            TimeUpdate();
+
+            // 残り時間がなくなったらゲーム終了
+            if (GameTimeInMilliSeconds <= 0)
+            {
+                // ハイスコア更新フラグが立っていたら保存
+                if (hiScoreUpdated)
+                {
+                    var save = new SaveData(score);
+                    var manager = new SaveDataManager();
+                    manager.Save(save);
+                }
+                SceneManager.LoadScene("title");
+            }
         }
     }
 
@@ -232,6 +309,7 @@ public class GameManager : MonoBehaviour
         {
             hiScore = showScore;
             HiScoreText.text = showScore.ToString(ScoreTextFormat);
+            hiScoreUpdated = true;
         }
     }
 
@@ -248,5 +326,39 @@ public class GameManager : MonoBehaviour
     Vector3 GetBlockPosition(int x, int y)
     {
         return  blocks.PositionAt(x, y, FieldLength).transform.position;
+    }
+
+    delegate void ThenFunc();
+    IEnumerator FadeOut(float delta = 0.01f, ThenFunc then = null)
+    {
+        for (var f = 0f; f <= 1f; f += delta)
+        {
+            var c = Curtain.color;
+            c.a = f;
+            Curtain.color = c;
+            yield return null;
+        }
+        then?.Invoke();
+    }
+
+    IEnumerator FadeIn(float delta = 0.01f, ThenFunc then = null)
+    {
+        for (var f = 1f; f <= 1f; f -= delta)
+        {
+            var c = Curtain.color;
+            c.a = f;
+            Curtain.color = c;
+            yield return null;
+        }
+        then?.Invoke();
+    }
+
+    IEnumerator BlockDeletePlay(int count)
+    {
+        for (var i = 0; i < count; ++i)
+        {
+            audioSource.PlayOneShot(BlockDelete);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }
