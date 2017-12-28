@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Assets.Scripts.Util
 {
     [Serializable]
-    struct SaveData
+    public struct SaveData
     {
         public int HiScore;
         public SaveData(int HiScore)
@@ -47,9 +47,17 @@ namespace Assets.Scripts.Util
             return true;
         }
 
-        public SaveData Load()
+        public SaveData? Load()
         {
-            return new SaveData();
+            try
+            {
+                var bytes = File.ReadAllBytes(filename);
+                return decode(bytes);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
         private byte[] encode(SaveData data)
@@ -57,12 +65,15 @@ namespace Assets.Scripts.Util
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(SaveData));
             var ms = new MemoryStream();
             serializer.Serialize(ms, data);
-            return ms.ToArray();
+            var t = ms.ToArray();
+            xor(ref t);
+            return t;
         }
 
         private SaveData? decode(byte[] data)
         {
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(SaveData));
+            xor(ref data);
             var ms = new MemoryStream(data);
             return serializer.Deserialize(ms) as SaveData?;
         }

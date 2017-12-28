@@ -73,7 +73,6 @@ public class InputManager : MonoBehaviour {
         var keyInt = (int)key;
         if (expr())
         {
-            Debug.Log($"{key.ToString()} {keyFrames[keyInt]}");
             keyFrames[keyInt] += 1;
             if (keyFrames[keyInt] == 1)
             {
@@ -132,7 +131,9 @@ public class InputManager : MonoBehaviour {
         FrameUpdateAndInvokeHandler(KEYS.UP, () => Input.GetAxis("Vertical") == 1.0f);
         FrameUpdateAndInvokeHandler(KEYS.BLOCKCHANGE_A, () => Input.GetButton("BlockChangeA"));
         FrameUpdateAndInvokeHandler(KEYS.BLOCKCHANGE_B, () => Input.GetButton("BlockChangeB"));
-        
+
+
+        Debug.Log($"{Input.GetAxis("Horizontal")}");
     }
 
 

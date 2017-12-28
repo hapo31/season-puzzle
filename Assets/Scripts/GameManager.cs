@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Util;
 using Assets.Scripts.Util;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,7 +21,8 @@ public class GameManager : MonoBehaviour
     public AudioClip BlockDelete;
     public AudioClip Ready;
     public AudioClip Go;
-
+    public AudioClip HiScoreUpdateSE;
+    public AudioClip FinishSE;
     public AudioClip BlockRegenerateSE;
 
     public Text ScoreText;
@@ -31,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     private AudioSource bgm;
     private AudioSource audioSource;
+
+    private List<ParticleSystem> hiscoreEffects;
 
     private bool startFlag = false;
     private bool readyFlag = false;
@@ -64,11 +68,22 @@ public class GameManager : MonoBehaviour
     private const float BASEX = 6.0f;
     private const float BASELENGTH = 2.6f;
 
+    private const string HISCORE = "hiscore";
+
+    private SaveDataManager saveDataManager = new SaveDataManager();
+    private SaveData savedata;
+
+    // 表示用スコア
     private int showScore = 0;
+    // 実際の内部スコア
     private int score = 0;
+    // ハイスコア
     private int hiScore = 0;
 
+    // ハイスコア更新フラグ
     private bool hiScoreUpdated = false;
+    // ゲーム終了フラグ
+    private bool finished = false;
 
     private int Score
     {
@@ -79,32 +94,49 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private int RestGameFrames { get { return GameTimeInMilliSeconds / 16; } }
+
     // Use this for initialization
     void Start()
     {
+
+        startFlag = false;
+        readyFlag = false;
+        showScore = 0;
+        score = 0;
+
+        hiScoreUpdated = false;
+
+        finished = false;
+
+
+        ScoreTextFormat = new string('0', ScoreText.text.Length);
         var audio = GetComponents<AudioSource>();
         audioSource = audio[0];
         bgm = audio[1];
 
+        hiscoreEffects = GameObject.FindGameObjectWithTag("HiScoreEffect").GetComponentsInChildren<ParticleSystem>().ToList();
 
-        // この辺でハイスコア読み込み処理
-        // hiScore = hogehoge();
+        // ハイスコア読み込み処理
+        savedata = saveDataManager.Load() ?? new SaveData();
+        hiScore = savedata.HiScore;
+
+        HiScoreText.text = hiScore.ToString(ScoreTextFormat);
 
         // 時間表示の更新
         TimeText.text = MilliSecondsToString.format(GameTimeInMilliSeconds);
         // 背景コントローラーの取得
         backgroundContoroller = GameObject.Find("InfomationBackground").GetComponent<BackgroundController>();
 
-        ScoreTextFormat = new string('0', ScoreText.text.Length);
         Score = 0;
         for (var i = 0; i < FieldLength * FieldLength; ++i)
         {
             var obj = Instantiate(blockPrefab);
 
             float x = i % FieldLength / (BASELENGTH * 2) * BASEX + OffsetXPosition;
-            float y =  -(i / FieldLength / BASELENGTH * BASEY + OffsetYPosition);
+            float y = -(i / FieldLength / BASELENGTH * BASEY + OffsetYPosition);
             obj.transform.position = new Vector3(x, y);
-            
+
             if (i == 0 || i == FieldLength - 1 || i == (FieldLength * (FieldLength - 1)) || i == (FieldLength * FieldLength) - 1)
             {
                 // フィールドの角の4つはNONEブロックにする
@@ -242,6 +274,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 開始前
         if (!startFlag)
         {
             if (!readyFlag)
@@ -251,6 +284,14 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                // ﾎﾟｯﾎﾟｯﾎﾟｯというレース前みたいなSEを鳴らす
+                if (GameReadyFrames % 60 == 0 && GameReadyFrames > 0)
+                {
+                    audioSource.PlayOneShot(Ready);
+                    Debug.Log($"{GameReadyFrames}");
+                }
+
+                // ゲーム開始フラグを立てる
                 if (GameReadyFrames <= 0)
                 {
                     audioSource.PlayOneShot(Go);
@@ -262,31 +303,44 @@ public class GameManager : MonoBehaviour
                 {
                     --GameReadyFrames;
                 }
-
-                if (GameReadyFrames % 60 == 0 && GameReadyFrames > 0)
-                {
-                    audioSource.PlayOneShot(Ready);
-                    Debug.Log($"{GameReadyFrames}");
-                }
             }
         }
         else
         {
-            FieldUpdate();
-            ScoreUpdate();
-            TimeUpdate();
-
-            // 残り時間がなくなったらゲーム終了
-            if (GameTimeInMilliSeconds <= 0)
+            if (!finished)
             {
-                // ハイスコア更新フラグが立っていたら保存
-                if (hiScoreUpdated)
+                // 10秒前になったらカウントダウンする
+                if (RestGameFrames > 0 && RestGameFrames <= 600 && RestGameFrames % 60 == 0)
                 {
-                    var save = new SaveData(score);
-                    var manager = new SaveDataManager();
-                    manager.Save(save);
+                    audioSource.PlayOneShot(Ready);
                 }
-                SceneManager.LoadScene("title");
+
+                FieldUpdate();
+                ScoreUpdate();
+                TimeUpdate();
+
+                // 残り時間がなくなったらゲーム終了
+                if (GameTimeInMilliSeconds <= 0)
+                {
+                    finished = true;
+                    // ゲーム終了時にもう一度スコア更新を行い、表示とのズレを無くす
+                    ScoreUpdate();
+                    audioSource.PlayOneShot(FinishSE);
+                    // ハイスコア更新フラグが立っていたら保存
+                    if (hiScoreUpdated)
+                    {
+                        savedata.HiScore = score;
+                        saveDataManager.Save(savedata);
+                    }
+
+                    // フェードアウト
+                    var c = FadeOut(0.01f, () =>
+                    {
+                        SceneManager.LoadScene("title");
+                    });
+
+                    StartCoroutine(c);
+                }
             }
         }
     }
@@ -302,6 +356,13 @@ public class GameManager : MonoBehaviour
         {
             showScore += 5;
             ScoreText.text = showScore.ToString(ScoreTextFormat);
+
+            // ゲームが終了していたら即代入する
+            if (finished)
+            {
+                showScore = score;
+                ScoreText.text = showScore.ToString(ScoreTextFormat);
+            }
         }
 
         // ハイスコアを上回ったら更新
@@ -309,6 +370,14 @@ public class GameManager : MonoBehaviour
         {
             hiScore = showScore;
             HiScoreText.text = showScore.ToString(ScoreTextFormat);
+            if (!hiScoreUpdated && hiScore > 0) // 初期スコア時は鳴らさない
+            {
+                Debug.Log("HiScore Updated");
+                // ハイスコア更新のSEを鳴らす
+                audioSource.PlayOneShot(HiScoreUpdateSE);
+                hiscoreEffects[0].Play();
+                hiscoreEffects[1].Play();
+            }
             hiScoreUpdated = true;
         }
     }
@@ -325,7 +394,7 @@ public class GameManager : MonoBehaviour
 
     Vector3 GetBlockPosition(int x, int y)
     {
-        return  blocks.PositionAt(x, y, FieldLength).transform.position;
+        return blocks.PositionAt(x, y, FieldLength).transform.position;
     }
 
     delegate void ThenFunc();
@@ -336,6 +405,7 @@ public class GameManager : MonoBehaviour
             var c = Curtain.color;
             c.a = f;
             Curtain.color = c;
+            Debug.Log($"{f}");
             yield return null;
         }
         then?.Invoke();
